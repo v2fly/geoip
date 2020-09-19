@@ -6,6 +6,8 @@
 package main
 
 import (
+	"bytes"
+	"compress/gzip"
 	"encoding/csv"
 	"flag"
 	"fmt"
@@ -111,6 +113,17 @@ func getPrivateIPs() *router.GeoIP {
 	}
 }
 
+func toGzip(data []byte) ([]byte, error) {
+	var buf bytes.Buffer
+	w := gzip.NewWriter(&buf)
+	defer w.Close()
+	_, err := w.Write(data)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
 func main() {
 	flag.Parse()
 
@@ -144,13 +157,17 @@ func main() {
 	}
 	geoIPList.Entry = append(geoIPList.Entry, getPrivateIPs())
 
-	geoIPBytes, err := proto.Marshal(geoIPList)
+	protoBytes, err := proto.Marshal(geoIPList)
 	if err != nil {
 		fmt.Println("Error marshalling geoip list:", err)
 		os.Exit(1)
 	}
-
-	if err := ioutil.WriteFile("geoip.dat", geoIPBytes, 0644); err != nil {
+	gzipBytes, err := toGzip(protoBytes)
+	if err != nil {
+		fmt.Println("Error gzipping geoip bytes:", err)
+		os.Exit(1)
+	}
+	if err := ioutil.WriteFile("geoip.dat", gzipBytes, 0644); err != nil {
 		fmt.Println("Error writing geoip to file:", err)
 		os.Exit(1)
 	} else {
