@@ -7,6 +7,7 @@ on:
       - master
     paths-ignore:
       - "README.md"
+      - "**/dependabot.yml"
 jobs:
   build:
     name: Build
