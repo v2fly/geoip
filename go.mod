@@ -3,7 +3,7 @@ module github.com/v2fly/geoip
 go 1.15
 
 require (
-	github.com/golang/protobuf v1.4.2
+	google.golang.org/protobuf v1.25.0
 	v2ray.com/core v4.19.1+incompatible
 )
 
