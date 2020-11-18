@@ -2,8 +2,6 @@
 
 Automatically weekly release of `geoip.dat` for V2Ray.
 
-This product includes GeoLite2 data created by MaxMind, available from [MaxMind](http://www.maxmind.com).
-
 ## Download links
 
 - **geoip.dat**：[https://github.com/v2fly/geoip/raw/release/geoip.dat](https://github.com/v2fly/geoip/raw/release/geoip.dat)
@@ -58,3 +56,11 @@ This product includes GeoLite2 data created by MaxMind, available from [MaxMind]
   ]
 }
 ```
+
+## Notice
+
+This product includes GeoLite2 data created by MaxMind, available from [MaxMind](http://www.maxmind.com).
+
+## License
+
+[CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/)
