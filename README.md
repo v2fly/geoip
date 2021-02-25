@@ -4,8 +4,8 @@ Automatically weekly release of `geoip.dat` for V2Ray.
 
 ## Download links
 
-- **geoip.dat**：[https://github.com/v2fly/geoip/raw/release/geoip.dat](https://github.com/v2fly/geoip/raw/release/geoip.dat)
-- **geoip.dat.sha256sum**：[https://github.com/v2fly/geoip/raw/release/geoip.dat.sha256sum](https://github.com/v2fly/geoip/raw/release/geoip.dat.sha256sum)
+- **geoip.dat**：[https://github.com/v2fly/domain-list-community/releases/latest/download/geoip.dat](https://github.com/v2fly/domain-list-community/releases/latest/download/geoip.dat)
+- **geoip.dat.sha256sum**：[https://github.com/v2fly/domain-list-community/releases/latest/download/geoip.dat.sha256sum](https://github.com/v2fly/domain-list-community/releases/latest/download/geoip.dat.sha256sum)
 
 ## Usage example
 
@@ -56,6 +56,17 @@ Automatically weekly release of `geoip.dat` for V2Ray.
   ]
 }
 ```
+
+## Generate `geoip.dat` manually
+
+- Install `golang` and `git`
+- Clone project code: `git clone https://github.com/v2fly/geoip.git`
+- Download `GeoLite2-Country-CSV.zip` from [MaxMind](https://dev.maxmind.com/geoip/geoip2/geolite2/), then unzip it to `geoip` directory
+- Navigate to project root directory: `cd geoip`
+- Install project dependencies: `go mod download`
+- Generate geoip.dat: `go run ./`
+
+Run `go run ./ --help` for more usage information.
 
 ## Notice
 
