@@ -50,6 +50,10 @@ var privateIPs = []string{
 	"fe80::/10",
 }
 
+var testIPs = []string{
+	"127.0.0.0/8",
+}
+
 func getCountryCodeMap() (map[string]string, error) {
 	countryCodeReader, err := os.Open(*countryCodeFile)
 	if err != nil {
@@ -114,6 +118,19 @@ func getPrivateIPs() *router.GeoIP {
 	}
 }
 
+func getTestIPs() *router.GeoIP {
+	cidr := make([]*router.CIDR, 0, len(testIPs))
+	for _, ip := range testIPs {
+		c, err := conf.ParseIP(ip)
+		common.Must(err)
+		cidr = append(cidr, c)
+	}
+	return &router.GeoIP{
+		CountryCode: "TEST",
+		Cidr:        cidr,
+	}
+}
+
 func main() {
 	flag.Parse()
 
@@ -141,6 +158,7 @@ func main() {
 		})
 	}
 	geoIPList.Entry = append(geoIPList.Entry, getPrivateIPs())
+	geoIPList.Entry = append(geoIPList.Entry, getTestIPs())
 
 	geoIPBytes, err := proto.Marshal(geoIPList)
 	if err != nil {
