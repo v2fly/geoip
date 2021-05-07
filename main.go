@@ -16,7 +16,7 @@ import (
 
 	"github.com/v2fly/v2ray-core/v4/app/router"
 	"github.com/v2fly/v2ray-core/v4/common"
-	"github.com/v2fly/v2ray-core/v4/infra/conf"
+	"github.com/v2fly/v2ray-core/v4/infra/conf/rule"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -94,7 +94,7 @@ func getCidrPerCountry(file string, m map[string]string, list map[string][]*rout
 		cidrStr := line[0]
 		countryID := line[1]
 		if countryCode, found := m[countryID]; found {
-			cidr, err := conf.ParseIP(cidrStr)
+			cidr, err := rule.ParseIP(cidrStr)
 			if err != nil {
 				return err
 			}
@@ -108,7 +108,7 @@ func getCidrPerCountry(file string, m map[string]string, list map[string][]*rout
 func getPrivateIPs() *router.GeoIP {
 	cidr := make([]*router.CIDR, 0, len(privateIPs))
 	for _, ip := range privateIPs {
-		c, err := conf.ParseIP(ip)
+		c, err := rule.ParseIP(ip)
 		common.Must(err)
 		cidr = append(cidr, c)
 	}
@@ -121,7 +121,7 @@ func getPrivateIPs() *router.GeoIP {
 func getTestIPs() *router.GeoIP {
 	cidr := make([]*router.CIDR, 0, len(testIPs))
 	for _, ip := range testIPs {
-		c, err := conf.ParseIP(ip)
+		c, err := rule.ParseIP(ip)
 		common.Must(err)
 		cidr = append(cidr, c)
 	}
