@@ -1,0 +1,60 @@
+{
+  "input": [
+    {
+      "type": "maxmindGeoLite2CountryCSV",
+      "action": "add",
+      "args": {
+        "country": "./geolite2/GeoLite2-Country-Locations-en.csv",
+        "ipv4": "./geolite2/GeoLite2-Country-Blocks-IPv4.csv",
+        "ipv6": "./geolite2/GeoLite2-Country-Blocks-IPv6.csv",
+        "wantedList": ["cn", "us"]
+      }
+    },
+    {
+      "type": "private",
+      "action": "add"
+    },
+    {
+      "type": "test",
+      "action": "add"
+    }
+  ],
+  "output": [
+    {
+      "type": "v2rayGeoIPDat",
+      "action": "output",
+      "args": {
+        "outputName": "geoip.dat",
+        "outputDir": "./publish"
+      }
+    },
+    {
+      "type": "v2rayGeoIPDat",
+      "action": "output",
+      "args": {
+        "outputName": "geoip-only-cn-private.dat",
+        "outputDir": "./publish",
+        "wantedList": ["cn", "private"]
+      }
+    },
+    {
+      "type": "v2rayGeoIPDat",
+      "action": "output",
+      "args": {
+        "outputDir": "./publish",
+        "oneFilePerList": true,
+        "wantedList": ["cn", "private", "test"],
+        "onlyIPType": "ipv4"
+      }
+    },
+    {
+      "type": "text",
+      "action": "output",
+      "args": {
+        "outputDir": "./publish",
+        "wantedList": ["cn", "us", "private"],
+        "onlyIPType": "ipv6"
+      }
+    }
+  ]
+}

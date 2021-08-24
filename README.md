@@ -6,6 +6,12 @@ Automatically weekly release of `geoip.dat` for V2Ray.
 
 - **geoip.dat**：[https://github.com/v2fly/geoip/releases/latest/download/geoip.dat](https://github.com/v2fly/geoip/releases/latest/download/geoip.dat)
 - **geoip.dat.sha256sum**：[https://github.com/v2fly/geoip/releases/latest/download/geoip.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/geoip.dat.sha256sum)
+- **geoip-only-cn-private.dat**：[https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat](https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat)
+- **geoip-only-cn-private.dat.sha256sum**：[https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat.sha256sum)
+- **cn.dat**：[https://github.com/v2fly/geoip/releases/latest/download/cn.dat](https://github.com/v2fly/geoip/releases/latest/download/cn.dat)
+- **cn.dat.sha256sum**：[https://github.com/v2fly/geoip/releases/latest/download/cn.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/cn.dat.sha256sum)
+- **private.dat**：[https://github.com/v2fly/geoip/releases/latest/download/private.dat](https://github.com/v2fly/geoip/releases/latest/download/private.dat)
+- **private.dat.sha256sum**：[https://github.com/v2fly/geoip/releases/latest/download/private.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/private.dat.sha256sum)
 
 ## Usage example
 
@@ -21,7 +27,11 @@ Automatically weekly release of `geoip.dat` for V2Ray.
         "180.76.76.76/32",
         "114.114.114.114/32",
         "geoip:cn",
-        "geoip:private"
+        "geoip:private",
+        "ext:cn.dat:cn",
+        "ext:private.dat:private",
+        "ext:geoip-only-cn-private.dat:cn",
+        "ext:geoip-only-cn-private.dat:private"
       ]
     },
     {
@@ -61,12 +71,36 @@ Automatically weekly release of `geoip.dat` for V2Ray.
 
 - Install `golang` and `git`
 - Clone project code: `git clone https://github.com/v2fly/geoip.git`
-- Download `GeoLite2-Country-CSV.zip` from [MaxMind](https://dev.maxmind.com/geoip/geoip2/geolite2/), then unzip it to `geoip` directory
+- Download `GeoLite2-Country-CSV.zip` from [MaxMind](https://dev.maxmind.com/geoip/geoip2/geolite2/), then unzip it to `geolite2` directory
 - Navigate to project root directory: `cd geoip`
 - Install project dependencies: `go mod download`
-- Generate geoip.dat: `go run ./`
+- Generate files: `go run ./`
 
-Run `go run ./ --help` for more usage information.
+`go run ./` will use `config.json` in current directory as the default config file. The generated files are located at `output` directory by default.
+
+Run `go run ./ --help` for more usage information. See `config-example.json` for more configuration options.
+
+## CLI showcase
+
+```bash
+$ ./geoip -h
+
+Usage of ./geoip:
+  -c string
+    	Path to the config file (default "config.json")
+  -l	List all available input and output formats
+
+
+$ ./geoip -l
+
+All available input formats:
+  - maxmindGeoLite2CountryCSV (Convert MaxMind GeoLite2 country CSV data to other formats)
+  - private (Convert LAN and private CIDR to other formats)
+  - test (Convert specific CIDR to other formats (for test only))
+All available output formats:
+  - text (Convert data to plaintext format)
+  - v2rayGeoIPDat (Convert data to V2Ray GeoIP dat format)
+```
 
 ## Notice
 
