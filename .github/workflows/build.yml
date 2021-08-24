@@ -17,7 +17,7 @@ jobs:
       - name: Set up Go 1.x.y
         uses: actions/setup-go@v2
         with:
-          go-version: ^1.16
+          go-version: ^1.17
 
       - name: Set variables
         run: |
@@ -26,7 +26,7 @@ jobs:
         shell: bash
 
       - name: Checkout codebase
-        uses: actions/checkout@v2.3.4
+        uses: actions/checkout@v2
 
       - name: Get GeoLite2
         env:
@@ -35,19 +35,23 @@ jobs:
           curl -L "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country-CSV&license_key=${LICENSE_KEY}&suffix=zip" -o GeoLite2-Country-CSV.zip
           unzip GeoLite2-Country-CSV.zip
           rm -f GeoLite2-Country-CSV.zip
-          mv GeoLite2* geoip
+          mv GeoLite2* geolite2
 
       - name: Build geoip.dat
         run: |
-          go run ./ --country=./geoip/GeoLite2-Country-Locations-en.csv --ipv4=./geoip/GeoLite2-Country-Blocks-IPv4.csv --ipv6=./geoip/GeoLite2-Country-Blocks-IPv6.csv
+          go run ./
 
-      - name: Generate geoip.dat sha256 checksum
-        run: sha256sum geoip.dat > geoip.dat.sha256sum
+      - name: Generate sha256 checksum for dat files
+        run: |
+          cd ./output/dat || exit 1
+          for name in $(ls *.dat); do
+            sha256sum ${name} > ./${name}.sha256sum
+          done
 
       - name: Move files to publish directory
         run: |
           mkdir -p publish
-          mv geoip.dat geoip.dat.sha256sum ./publish
+          mv ./output/dat/*.dat ./output/dat/*.sha256sum ./publish
 
       - name: Git push assets to "release" branch
         run: |
@@ -56,7 +60,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git checkout -b release
-          git add geoip.dat geoip.dat.sha256sum
+          git add *.dat *.sha256sum
           git commit -m "${{ env.RELEASE_NAME }}"
           git remote add geoip "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
           git push -f geoip release
@@ -90,4 +94,64 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./publish/geoip.dat.sha256sum
           asset_name: geoip.dat.sha256sum
+          asset_content_type: text/plain
+
+      - name: Upload geoip-only-cn-private.dat
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./publish/geoip-only-cn-private.dat
+          asset_name: geoip-only-cn-private.dat
+          asset_content_type: application/octet-stream
+
+      - name: Upload geoip-only-cn-private.dat.sha256sum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./publish/geoip-only-cn-private.dat.sha256sum
+          asset_name: geoip-only-cn-private.dat.sha256sum
+          asset_content_type: text/plain
+
+      - name: Upload cn.dat
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./publish/cn.dat
+          asset_name: cn.dat
+          asset_content_type: application/octet-stream
+
+      - name: Upload cn.dat.sha256sum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./publish/cn.dat.sha256sum
+          asset_name: cn.dat.sha256sum
+          asset_content_type: text/plain
+
+      - name: Upload private.dat
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./publish/private.dat
+          asset_name: private.dat
+          asset_content_type: application/octet-stream
+
+      - name: Upload private.dat.sha256sum
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./publish/private.dat.sha256sum
+          asset_name: private.dat.sha256sum
           asset_content_type: text/plain
