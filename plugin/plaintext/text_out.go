@@ -12,8 +12,8 @@ import (
 )
 
 const (
-	typeText = "text"
-	descText = "Convert data to plaintext format"
+	typeTextOut = "text"
+	descTextOut = "Convert data to plaintext format"
 )
 
 var (
@@ -21,15 +21,15 @@ var (
 )
 
 func init() {
-	lib.RegisterOutputConfigCreator(typeText, func(action lib.Action, data json.RawMessage) (lib.OutputConverter, error) {
-		return newText(action, data)
+	lib.RegisterOutputConfigCreator(typeTextOut, func(action lib.Action, data json.RawMessage) (lib.OutputConverter, error) {
+		return newTextOut(action, data)
 	})
-	lib.RegisterOutputConverter(typeText, &text{
-		Description: descText,
+	lib.RegisterOutputConverter(typeTextOut, &textOut{
+		Description: descTextOut,
 	})
 }
 
-func newText(action lib.Action, data json.RawMessage) (lib.OutputConverter, error) {
+func newTextOut(action lib.Action, data json.RawMessage) (lib.OutputConverter, error) {
 	var tmp struct {
 		OutputDir  string     `json:"outputDir"`
 		Want       []string   `json:"wantedList"`
@@ -46,17 +46,17 @@ func newText(action lib.Action, data json.RawMessage) (lib.OutputConverter, erro
 		tmp.OutputDir = defaultOutputDir
 	}
 
-	return &text{
-		Type:        typeText,
+	return &textOut{
+		Type:        typeTextOut,
 		Action:      action,
-		Description: descText,
+		Description: descTextOut,
 		OutputDir:   tmp.OutputDir,
 		Want:        tmp.Want,
 		OnlyIPType:  tmp.OnlyIPType,
 	}, nil
 }
 
-type text struct {
+type textOut struct {
 	Type        string
 	Action      lib.Action
 	Description string
@@ -65,19 +65,19 @@ type text struct {
 	OnlyIPType  lib.IPType
 }
 
-func (t *text) GetType() string {
+func (t *textOut) GetType() string {
 	return t.Type
 }
 
-func (t *text) GetAction() lib.Action {
+func (t *textOut) GetAction() lib.Action {
 	return t.Action
 }
 
-func (t *text) GetDescription() string {
+func (t *textOut) GetDescription() string {
 	return t.Description
 }
 
-func (t *text) Output(container lib.Container) error {
+func (t *textOut) Output(container lib.Container) error {
 	// Filter want list
 	wantList := make(map[string]bool)
 	for _, want := range t.Want {
@@ -120,7 +120,7 @@ func (t *text) Output(container lib.Container) error {
 	return nil
 }
 
-func (t *text) marshalText(entry *lib.Entry) ([]string, error) {
+func (t *textOut) marshalText(entry *lib.Entry) ([]string, error) {
 	var entryCidr []string
 	var err error
 	switch t.OnlyIPType {
@@ -144,7 +144,7 @@ func (t *text) marshalText(entry *lib.Entry) ([]string, error) {
 	return entryCidr, nil
 }
 
-func (t *text) writeFile(filename string, cidrList []string) error {
+func (t *textOut) writeFile(filename string, cidrList []string) error {
 	var buf bytes.Buffer
 	for _, cidr := range cidrList {
 		buf.WriteString(cidr)
