@@ -13,7 +13,7 @@ Automatically weekly release of `geoip.dat` for V2Ray.
 - **private.dat**：[https://github.com/v2fly/geoip/releases/latest/download/private.dat](https://github.com/v2fly/geoip/releases/latest/download/private.dat)
 - **private.dat.sha256sum**：[https://github.com/v2fly/geoip/releases/latest/download/private.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/private.dat.sha256sum)
 
-## Usage example
+## Usage example in V2Ray
 
 ```json
 "routing": {
@@ -67,7 +67,7 @@ Automatically weekly release of `geoip.dat` for V2Ray.
 }
 ```
 
-## Generate `geoip.dat` manually
+## Generate manually
 
 - Install `golang` and `git`
 - Clone project code: `git clone https://github.com/v2fly/geoip.git`
@@ -78,28 +78,26 @@ Automatically weekly release of `geoip.dat` for V2Ray.
 
 `go run ./` will use `config.json` in current directory as the default config file. The generated files are located at `output` directory by default.
 
-Run `go run ./ --help` for more usage information. See `config-example.json` for more configuration options.
+Run `go run ./ -h` for more usage information. See `config-example.json` for more configuration options.
 
 ## CLI showcase
 
 ```bash
 $ ./geoip -h
-
 Usage of ./geoip:
   -c string
     	Path to the config file (default "config.json")
   -l	List all available input and output formats
 
-
 $ ./geoip -l
-
 All available input formats:
   - maxmindGeoLite2CountryCSV (Convert MaxMind GeoLite2 country CSV data to other formats)
+  - text (Convert plaintext data to other formats)
   - private (Convert LAN and private CIDR to other formats)
   - test (Convert specific CIDR to other formats (for test only))
 All available output formats:
-  - text (Convert data to plaintext format)
   - v2rayGeoIPDat (Convert data to V2Ray GeoIP dat format)
+  - text (Convert data to plaintext format)
 ```
 
 ## Notice
