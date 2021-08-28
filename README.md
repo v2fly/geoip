@@ -1,6 +1,8 @@
-# GeoIP List for V2Ray
+# GeoIP for V2Ray
 
-Automatically weekly release of `geoip.dat` for V2Ray.
+This project automatically weekly releases GeoIP files for routing purpose in Project V. It also provides a command line interface(CLI) for users to customize their own GeoIP files.
+
+These two concepts are notable: `input` and `output`. The `input` is the data source, whereas the `output` is the destination of the converted data. What the CLI does is to aggregate all `input` format data, then convert them to `output` format by using the options in the config file.
 
 ## Download links
 
@@ -13,7 +15,7 @@ Automatically weekly release of `geoip.dat` for V2Ray.
 - **private.dat**：[https://github.com/v2fly/geoip/releases/latest/download/private.dat](https://github.com/v2fly/geoip/releases/latest/download/private.dat)
 - **private.dat.sha256sum**：[https://github.com/v2fly/geoip/releases/latest/download/private.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/private.dat.sha256sum)
 
-## Usage example in V2Ray
+## GeoIP usage example in V2Ray
 
 ```json
 "routing": {
@@ -67,12 +69,12 @@ Automatically weekly release of `geoip.dat` for V2Ray.
 }
 ```
 
-## Generate manually
+## Generate GeoIP files manually
 
 - Install `golang` and `git`
 - Clone project code: `git clone https://github.com/v2fly/geoip.git`
-- Download `GeoLite2-Country-CSV.zip` from [MaxMind](https://dev.maxmind.com/geoip/geoip2/geolite2/), then unzip it to `geolite2` directory
 - Navigate to project root directory: `cd geoip`
+- Download `GeoLite2-Country-CSV.zip` from [MaxMind](https://dev.maxmind.com/geoip/geoip2/geolite2/), then unzip it to `geolite2` directory
 - Install project dependencies: `go mod download`
 - Generate files: `go run ./`
 
