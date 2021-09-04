@@ -9,7 +9,7 @@ import (
 const (
 	entryNamePrivate = "private"
 	typePrivate      = "private"
-	descPrivate      = "Convert LAN and private CIDR to other formats"
+	descPrivate      = "Convert LAN and private network CIDR to other formats"
 )
 
 var privateCIDRs = []string{

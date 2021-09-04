@@ -21,7 +21,10 @@
   "output": [
     {
       "type": "v2rayGeoIPDat",
-      "action": "output"
+      "action": "output",
+      "args": {
+        "outputName": "geoip.dat"
+      }
     },
     {
       "type": "v2rayGeoIPDat",

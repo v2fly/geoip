@@ -16,7 +16,7 @@ import (
 
 const (
 	typeTextIn = "text"
-	descTextIn = "Convert plaintext data to other formats"
+	descTextIn = "Convert plaintext IP and CIDR to other formats"
 )
 
 func init() {

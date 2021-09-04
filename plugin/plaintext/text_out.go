@@ -13,7 +13,7 @@ import (
 
 const (
 	typeTextOut = "text"
-	descTextOut = "Convert data to plaintext format"
+	descTextOut = "Convert data to plaintext CIDR format"
 )
 
 var (
