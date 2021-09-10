@@ -103,7 +103,7 @@ func (t *textOut) Output(container lib.Container) error {
 		for name := range wantList {
 			entry, found := container.GetEntry(name)
 			if !found {
-				log.Printf("entry %s not found", name)
+				log.Printf("❌ entry %s not found", name)
 				continue
 			}
 			cidrList, err := t.marshalText(entry)
