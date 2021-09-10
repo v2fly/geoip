@@ -44,10 +44,7 @@
     },
     {
       "type": "text",
-      "action": "output",
-      "args": {
-        "wantedList": ["cn"]
-      }
+      "action": "output"
     }
   ]
 }
