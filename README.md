@@ -110,6 +110,7 @@ All available input formats:
   - maxmindGeoLite2CountryCSV (Convert MaxMind GeoLite2 country CSV data to other formats)
   - text (Convert plaintext IP and CIDR to other formats)
   - private (Convert LAN and private network CIDR to other formats)
+  - cutter (Remove data from previous steps)
   - test (Convert specific CIDR to other formats (for test only))
 All available output formats:
   - v2rayGeoIPDat (Convert data to V2Ray GeoIP dat format)
