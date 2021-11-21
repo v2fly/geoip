@@ -107,6 +107,7 @@ $ ./geoip -c config.json
 
 $ ./geoip -l
 All available input formats:
+  - v2rayGeoIPDat (Convert V2Ray GeoIP dat to other formats)
   - maxmindGeoLite2CountryCSV (Convert MaxMind GeoLite2 country CSV data to other formats)
   - text (Convert plaintext IP and CIDR to other formats)
   - private (Convert LAN and private network CIDR to other formats)
