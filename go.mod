@@ -1,10 +1,10 @@
 module github.com/v2fly/geoip
 
-go 1.17
+go 1.18
 
 require (
 	github.com/v2fly/v2ray-core/v4 v4.44.0
-	google.golang.org/protobuf v1.27.1
+	google.golang.org/protobuf v1.28.0
 	inet.af/netaddr v0.0.0-20211027220019-c74959edd3b6
 )
 
