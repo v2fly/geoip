@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/v2fly/v2ray-core/v5 v5.0.3
-	google.golang.org/protobuf v1.28.0
+	google.golang.org/protobuf v1.28.1
 	inet.af/netaddr v0.0.0-20211027220019-c74959edd3b6
 )
 
