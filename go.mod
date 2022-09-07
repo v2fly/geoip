@@ -3,7 +3,7 @@ module github.com/v2fly/geoip
 go 1.19
 
 require (
-	github.com/v2fly/v2ray-core/v5 v5.0.8
+	github.com/v2fly/v2ray-core/v5 v5.1.0
 	go4.org/netipx v0.0.0-20220812043211-3cc044ffd68d
 	google.golang.org/protobuf v1.28.1
 )
