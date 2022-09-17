@@ -28,6 +28,35 @@
       }
     },
     {
+      "type": "maxmindMMDB",
+      "action": "add"
+    },
+    {
+      "type": "maxmindMMDB",
+      "action": "add",
+      "args": {
+        "uri": "./path/to/your/mmdb/file",
+        "wantedList": ["cn", "us"],
+        "onlyIPType": "ipv4"
+      }
+    },
+    {
+      "type": "maxmindMMDB",
+      "action": "add",
+      "args": {
+        "uri": "https://example.com/link/to/your/mmdb/file"
+      }
+    },
+    {
+      "type": "maxmindMMDB",
+      "action": "remove",
+      "args": {
+        "uri": "https://example.com/link/to/your/mmdb/file",
+        "wantedList": ["jp", "sg"],
+        "onlyIPType": "ipv6"
+      }
+    },
+    {
       "type": "cutter",
       "action": "remove",
       "args": {
