@@ -3,7 +3,8 @@ module github.com/v2fly/geoip
 go 1.19
 
 require (
-	github.com/v2fly/v2ray-core/v5 v5.0.8
+	github.com/oschwald/maxminddb-golang v1.10.0
+	github.com/v2fly/v2ray-core/v5 v5.1.0
 	go4.org/netipx v0.0.0-20220812043211-3cc044ffd68d
 	google.golang.org/protobuf v1.28.1
 )
@@ -20,7 +21,7 @@ require (
 	go4.org/intern v0.0.0-20211027215823-ae77deb06f29 // indirect
 	go4.org/unsafe/assume-no-moving-gc v0.0.0-20220617031537-928513b29760 // indirect
 	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064 // indirect
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
+	golang.org/x/sys v0.0.0-20220804214406-8e32c043e418 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	inet.af/netaddr v0.0.0-20211027220019-c74959edd3b6 // indirect
 )
