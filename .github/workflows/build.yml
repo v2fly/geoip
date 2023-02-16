@@ -70,7 +70,7 @@ jobs:
 
       - name: Release and upload assets
         run: |
-          gh release create ${{ env.TAG_NAME }}} -t ${{ env.RELEASE_NAME }} \
+          gh release create ${{ env.TAG_NAME }} -t ${{ env.RELEASE_NAME }} \
             ./publish/geoip.dat \
             ./publish/geoip.dat.sha256sum \
             ./publish/geoip-only-cn-private.dat \
