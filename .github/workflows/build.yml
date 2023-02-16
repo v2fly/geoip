@@ -16,19 +16,19 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Go 1.x.y
+      - name: Checkout codebase
+        uses: actions/checkout@v3
+
+      - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: ^1.18
+          go-version-file: go.mod
 
       - name: Set variables
         run: |
           echo "TAG_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
           echo "RELEASE_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
         shell: bash
-
-      - name: Checkout codebase
-        uses: actions/checkout@v3
 
       - name: Get GeoLite2
         env:
@@ -69,20 +69,15 @@ jobs:
           git push -f geoip release
 
       - name: Release and upload assets
-        uses: softprops/action-gh-release@v1
-        with:
-          name: ${{ env.RELEASE_NAME }}
-          tag_name: ${{ env.TAG_NAME }}
-          draft: false
-          prerelease: false
-          files: |
-            ./publish/geoip.dat
-            ./publish/geoip.dat.sha256sum
-            ./publish/geoip-only-cn-private.dat
-            ./publish/geoip-only-cn-private.dat.sha256sum
-            ./publish/cn.dat
-            ./publish/cn.dat.sha256sum
-            ./publish/private.dat
+        run: |
+          gh release create ${{ env.TAG_NAME }}} -t ${{ env.RELEASE_NAME }} \
+            ./publish/geoip.dat \
+            ./publish/geoip.dat.sha256sum \
+            ./publish/geoip-only-cn-private.dat \
+            ./publish/geoip-only-cn-private.dat.sha256sum \
+            ./publish/cn.dat \
+            ./publish/cn.dat.sha256sum \
+            ./publish/private.dat \
             ./publish/private.dat.sha256sum
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
