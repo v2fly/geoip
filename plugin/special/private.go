@@ -32,7 +32,7 @@ var privateCIDRs = []string{
 	"::1/128",
 	"fc00::/7",
 	"fe80::/10",
- "ff00::/8",
+	"ff00::/8",
 }
 
 func init() {
