@@ -11,14 +11,14 @@ require (
 
 require (
 	github.com/adrg/xdg v0.4.0 // indirect
-	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pires/go-proxyproto v0.6.2 // indirect
 	github.com/quic-go/qtls-go1-18 v0.2.0 // indirect
 	github.com/quic-go/qtls-go1-19 v0.2.1 // indirect
-	github.com/quic-go/qtls-go1-20 v0.1.1 // indirect
-	github.com/quic-go/quic-go v0.33.0 // indirect
+	github.com/quic-go/qtls-go1-20 v0.3.1 // indirect
+	github.com/quic-go/quic-go v0.37.7 // indirect
 	go.starlark.net v0.0.0-20220817180228-f738f5508c12 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
