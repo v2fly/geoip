@@ -97,6 +97,7 @@ Usage of ./geoip:
     	Path to the config file (default "config.json")
   -l	List all available input and output formats
 
+
 $ ./geoip -c config.json
 2021/09/02 00:26:12 ✅ [v2rayGeoIPDat] geoip.dat --> output/dat
 2021/09/02 00:26:12 ✅ [v2rayGeoIPDat] geoip-only-cn-private.dat --> output/dat
@@ -105,18 +106,20 @@ $ ./geoip -c config.json
 2021/09/02 00:26:12 ✅ [v2rayGeoIPDat] test.dat --> output/dat
 2021/09/02 00:26:12 ✅ [text] cn.txt --> output/text
 
+
 $ ./geoip -l
 All available input formats:
-  - v2rayGeoIPDat (Convert V2Ray GeoIP dat to other formats)
-  - maxmindMMDB (Convert MaxMind mmdb database to other formats)
-  - maxmindGeoLite2CountryCSV (Convert MaxMind GeoLite2 country CSV data to other formats)
-  - text (Convert plaintext IP and CIDR to other formats)
-  - private (Convert LAN and private network CIDR to other formats)
   - cutter (Remove data from previous steps)
+  - maxmindGeoLite2CountryCSV (Convert MaxMind GeoLite2 country CSV data to other formats)
+  - maxmindMMDB (Convert MaxMind mmdb database to other formats)
+  - private (Convert LAN and private network CIDR to other formats)
   - test (Convert specific CIDR to other formats (for test only))
+  - text (Convert plaintext IP and CIDR to other formats)
+  - v2rayGeoIPDat (Convert V2Ray GeoIP dat to other formats)
+
 All available output formats:
-  - v2rayGeoIPDat (Convert data to V2Ray GeoIP dat format)
   - text (Convert data to plaintext CIDR format)
+  - v2rayGeoIPDat (Convert data to V2Ray GeoIP dat format)
 ```
 
 ## Notice

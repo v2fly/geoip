@@ -7,6 +7,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 
 	"github.com/v2fly/geoip/lib"
@@ -22,6 +23,7 @@ func main() {
 
 	if *list {
 		lib.ListInputConverter()
+		fmt.Println()
 		lib.ListOutputConverter()
 		return
 	}
