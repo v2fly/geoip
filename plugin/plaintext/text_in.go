@@ -214,6 +214,13 @@ func (t *textIn) scanFile(reader io.Reader, entry *lib.Entry) error {
 		if line == "" {
 			continue
 		}
+		line, _, _ = strings.Cut(line, "#")
+		line, _, _ = strings.Cut(line, "//")
+		line, _, _ = strings.Cut(line, "/*")
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
 		if err := entry.AddPrefix(line); err != nil {
 			return err
 		}
