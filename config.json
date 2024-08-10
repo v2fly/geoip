@@ -23,6 +23,7 @@
       "type": "v2rayGeoIPDat",
       "action": "output",
       "args": {
+        "outputDir": "./output",
         "outputName": "geoip.dat"
       }
     },
@@ -30,6 +31,7 @@
       "type": "v2rayGeoIPDat",
       "action": "output",
       "args": {
+        "outputDir": "./output",
         "outputName": "geoip-only-cn-private.dat",
         "wantedList": ["cn", "private"]
       }
@@ -38,6 +40,7 @@
       "type": "v2rayGeoIPDat",
       "action": "output",
       "args": {
+        "outputDir": "./output",
         "oneFilePerList": true,
         "wantedList": ["cn", "private", "test"]
       }

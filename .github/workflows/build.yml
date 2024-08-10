@@ -45,20 +45,14 @@ jobs:
 
       - name: Generate sha256 checksum for dat files
         run: |
-          cd ./output/dat || exit 1
+          cd ./output || exit 1
           for name in $(ls *.dat); do
             sha256sum ${name} > ./${name}.sha256sum
           done
 
-      - name: Move files to publish directory
-        run: |
-          mkdir -p publish
-          mv ./output/dat/*.dat ./output/dat/*.sha256sum ./publish
-          cp -fpPR ./output/text ./publish
-
       - name: Git push assets to "release" branch
         run: |
-          cd publish || exit 1
+          cd output || exit 1
           git init
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -71,13 +65,13 @@ jobs:
       - name: Release and upload assets
         run: |
           gh release create ${{ env.TAG_NAME }} -t ${{ env.RELEASE_NAME }} \
-            ./publish/geoip.dat \
-            ./publish/geoip.dat.sha256sum \
-            ./publish/geoip-only-cn-private.dat \
-            ./publish/geoip-only-cn-private.dat.sha256sum \
-            ./publish/cn.dat \
-            ./publish/cn.dat.sha256sum \
-            ./publish/private.dat \
-            ./publish/private.dat.sha256sum
+            ./output/geoip.dat \
+            ./output/geoip.dat.sha256sum \
+            ./output/geoip-only-cn-private.dat \
+            ./output/geoip-only-cn-private.dat.sha256sum \
+            ./output/cn.dat \
+            ./output/cn.dat.sha256sum \
+            ./output/private.dat \
+            ./output/private.dat.sha256sum
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
