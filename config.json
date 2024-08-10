@@ -46,6 +46,13 @@
       }
     },
     {
+      "type": "v2rayGeoIPDat",
+      "action": "output",
+      "args": {
+        "oneFilePerList": true
+      }
+    },
+    {
       "type": "text",
       "action": "output"
     }
