@@ -47,12 +47,20 @@ func newTextOut(action lib.Action, data json.RawMessage) (lib.OutputConverter, e
 		tmp.OutputDir = defaultOutputDir
 	}
 
+	// Filter want list
+	wantList := make([]string, 0, len(tmp.Want))
+	for _, want := range tmp.Want {
+		if want = strings.ToUpper(strings.TrimSpace(want)); want != "" {
+			wantList = append(wantList, want)
+		}
+	}
+
 	return &textOut{
 		Type:        typeTextOut,
 		Action:      action,
 		Description: descTextOut,
 		OutputDir:   tmp.OutputDir,
-		Want:        tmp.Want,
+		Want:        wantList,
 		OnlyIPType:  tmp.OnlyIPType,
 	}, nil
 }
@@ -79,15 +87,7 @@ func (t *textOut) GetDescription() string {
 }
 
 func (t *textOut) Output(container lib.Container) error {
-	// Filter want list
-	wantList := make([]string, 0, len(t.Want))
-	for _, want := range t.Want {
-		if want = strings.ToUpper(strings.TrimSpace(want)); want != "" {
-			wantList = append(wantList, want)
-		}
-	}
-
-	switch len(wantList) {
+	switch len(t.Want) {
 	case 0:
 		list := make([]string, 0, 300)
 		for entry := range container.Loop() {
@@ -115,9 +115,9 @@ func (t *textOut) Output(container lib.Container) error {
 
 	default:
 		// Sort the list
-		slices.Sort(wantList)
+		slices.Sort(t.Want)
 
-		for _, name := range wantList {
+		for _, name := range t.Want {
 			entry, found := container.GetEntry(name)
 			if !found {
 				log.Printf("❌ entry %s not found", name)
