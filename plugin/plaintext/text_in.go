@@ -35,6 +35,9 @@ func newTextIn(action lib.Action, data json.RawMessage) (lib.InputConverter, err
 		InputDir   string     `json:"inputDir"`
 		Want       []string   `json:"wantedList"`
 		OnlyIPType lib.IPType `json:"onlyIPType"`
+
+		RemovePrefixesInLine []string `json:"removePrefixesInLine"`
+		RemoveSuffixesInLine []string `json:"removeSuffixesInLine"`
 	}
 
 	if len(data) > 0 {
@@ -68,6 +71,9 @@ func newTextIn(action lib.Action, data json.RawMessage) (lib.InputConverter, err
 		InputDir:    tmp.InputDir,
 		Want:        wantList,
 		OnlyIPType:  tmp.OnlyIPType,
+
+		RemovePrefixesInLine: tmp.RemovePrefixesInLine,
+		RemoveSuffixesInLine: tmp.RemoveSuffixesInLine,
 	}, nil
 }
 
@@ -80,6 +86,9 @@ type textIn struct {
 	InputDir    string
 	Want        map[string]bool
 	OnlyIPType  lib.IPType
+
+	RemovePrefixesInLine []string
+	RemoveSuffixesInLine []string
 }
 
 func (t *textIn) GetType() string {
@@ -239,10 +248,8 @@ func (t *textIn) walkRemoteFile(url, name string, entries map[string]*lib.Entry)
 func (t *textIn) scanFile(reader io.Reader, entry *lib.Entry) error {
 	scanner := bufio.NewScanner(reader)
 	for scanner.Scan() {
-		line := strings.TrimSpace(scanner.Text())
-		if line == "" {
-			continue
-		}
+		line := scanner.Text()
+
 		line, _, _ = strings.Cut(line, "#")
 		line, _, _ = strings.Cut(line, "//")
 		line, _, _ = strings.Cut(line, "/*")
@@ -250,11 +257,23 @@ func (t *textIn) scanFile(reader io.Reader, entry *lib.Entry) error {
 		if line == "" {
 			continue
 		}
+
+		line = strings.ToLower(line)
+		for _, prefix := range t.RemovePrefixesInLine {
+			line = strings.TrimSpace(strings.TrimPrefix(line, strings.ToLower(strings.TrimSpace(prefix))))
+		}
+		for _, suffix := range t.RemoveSuffixesInLine {
+			line = strings.TrimSpace(strings.TrimSuffix(line, strings.ToLower(strings.TrimSpace(suffix))))
+		}
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+
 		if err := entry.AddPrefix(line); err != nil {
 			return err
 		}
 	}
-
 	if err := scanner.Err(); err != nil {
 		return err
 	}
