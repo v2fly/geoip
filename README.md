@@ -1,19 +1,37 @@
 # GeoIP for V2Ray
 
-This project automatically weekly releases GeoIP files for routing purpose in Project V. It also provides a command line interface(CLI) for users to customize their own GeoIP files.
+This project releases GeoIP files automatically every Thursday for routing purpose in Project V. It also provides a command line interface(CLI) tool for users to customize their own GeoIP files.
 
 These two concepts are notable: `input` and `output`. The `input` is the data source and its input format, whereas the `output` is the destination of the converted data and its output format. What the CLI does is to aggregate all input format data, then convert them to output format and write them to GeoIP files by using the options in the config file.
 
 ## Download links
 
-- **geoip.dat**：[https://github.com/v2fly/geoip/releases/latest/download/geoip.dat](https://github.com/v2fly/geoip/releases/latest/download/geoip.dat)
-- **geoip.dat.sha256sum**：[https://github.com/v2fly/geoip/releases/latest/download/geoip.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/geoip.dat.sha256sum)
-- **geoip-only-cn-private.dat**：[https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat](https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat)
-- **geoip-only-cn-private.dat.sha256sum**：[https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat.sha256sum)
-- **cn.dat**：[https://github.com/v2fly/geoip/releases/latest/download/cn.dat](https://github.com/v2fly/geoip/releases/latest/download/cn.dat)
-- **cn.dat.sha256sum**：[https://github.com/v2fly/geoip/releases/latest/download/cn.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/cn.dat.sha256sum)
-- **private.dat**：[https://github.com/v2fly/geoip/releases/latest/download/private.dat](https://github.com/v2fly/geoip/releases/latest/download/private.dat)
-- **private.dat.sha256sum**：[https://github.com/v2fly/geoip/releases/latest/download/private.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/private.dat.sha256sum)
+For all GeoIP files released by this project, see the [release branch](https://github.com/v2fly/geoip/tree/release). Below are download URLs for some GeoIP files:
+
+- **geoip.dat**：
+  - [https://github.com/v2fly/geoip/releases/latest/download/geoip.dat](https://github.com/v2fly/geoip/releases/latest/download/geoip.dat)
+  - [https://cdn.jsdelivr.net/gh/v2fly/geoip@release/geoip.dat](https://cdn.jsdelivr.net/gh/v2fly/geoip@release/geoip.dat)
+- **geoip.dat.sha256sum**：
+  - [https://github.com/v2fly/geoip/releases/latest/download/geoip.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/geoip.dat.sha256sum)
+  - [https://cdn.jsdelivr.net/gh/v2fly/geoip@release/geoip.dat.sha256sum](https://cdn.jsdelivr.net/gh/v2fly/geoip@release/geoip.dat.sha256sum)
+- **geoip-only-cn-private.dat**：
+  - [https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat](https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat)
+  - [https://cdn.jsdelivr.net/gh/v2fly/geoip@release/geoip-only-cn-private.dat](https://cdn.jsdelivr.net/gh/v2fly/geoip@release/geoip-only-cn-private.dat)
+- **geoip-only-cn-private.dat.sha256sum**：
+  - [https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/geoip-only-cn-private.dat.sha256sum)
+  - [https://cdn.jsdelivr.net/gh/v2fly/geoip@release/geoip-only-cn-private.dat.sha256sum](https://cdn.jsdelivr.net/gh/v2fly/geoip@release/geoip-only-cn-private.dat.sha256sum)
+- **cn.dat**：
+  - [https://github.com/v2fly/geoip/releases/latest/download/cn.dat](https://github.com/v2fly/geoip/releases/latest/download/cn.dat)
+  - [https://cdn.jsdelivr.net/gh/v2fly/geoip@release/cn.dat](https://cdn.jsdelivr.net/gh/v2fly/geoip@release/cn.dat)
+- **cn.dat.sha256sum**：
+  - [https://github.com/v2fly/geoip/releases/latest/download/cn.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/cn.dat.sha256sum)
+  - [https://cdn.jsdelivr.net/gh/v2fly/geoip@release/cn.dat.sha256sum](https://cdn.jsdelivr.net/gh/v2fly/geoip@release/cn.dat.sha256sum)
+- **private.dat**：
+  - [https://github.com/v2fly/geoip/releases/latest/download/private.dat](https://github.com/v2fly/geoip/releases/latest/download/private.dat)
+  - [https://cdn.jsdelivr.net/gh/v2fly/geoip@release/private.dat](https://cdn.jsdelivr.net/gh/v2fly/geoip@release/private.dat)
+- **private.dat.sha256sum**：
+  - [https://github.com/v2fly/geoip/releases/latest/download/private.dat.sha256sum](https://github.com/v2fly/geoip/releases/latest/download/private.dat.sha256sum)
+  - [https://cdn.jsdelivr.net/gh/v2fly/geoip@release/private.dat.sha256sum](https://cdn.jsdelivr.net/gh/v2fly/geoip@release/private.dat.sha256sum)
 
 ## GeoIP usage example in V2Ray
 
@@ -69,13 +87,35 @@ These two concepts are notable: `input` and `output`. The `input` is the data so
 }
 ```
 
-## Generate GeoIP files manually
+## Customize GeoIP files
+
+### Concept explanation
+
+These two concepts are notable: `input` and `output`. The `input` is the data source and its input format, whereas the `output` is the destination of the converted data and its output format. What the CLI does is to aggregate all input format data, then convert them to output format and write them to GeoIP files by using the options in the config file.
+
+### Supported formats
+
+Supported `input` formats:
+
+- **cutter**: Remove data from previous steps
+- **maxmindGeoLite2CountryCSV**: Convert MaxMind GeoLite2 country CSV data to other formats
+- **maxmindMMDB**: Convert MaxMind mmdb database to other formats
+- **private**: Convert LAN and private network CIDR to other formats
+- **text**: Convert plaintext IP and CIDR to other formats
+- **v2rayGeoIPDat**: Convert V2Ray GeoIP dat to other formats
+
+Supported `output` formats:
+
+- **text**: Convert data to plaintext CIDR format
+- **v2rayGeoIPDat**: Convert data to V2Ray GeoIP dat format
+
+### Steps
 
 1. Install `golang` and `git`
 2. Clone project code: `git clone https://github.com/v2fly/geoip.git`
 3. Navigate to project root directory: `cd geoip`
 4. Install project dependencies: `go mod download`
-5. Edit config file `config.json` by referencing the example configuration options in file `config-example.json`
+5. Edit config file `config.json` by referencing the configuration options in [configuration.md](https://github.com/v2fly/geoip/blob/HEAD/configuration.md)
 6. Generate files: `go run ./`
 
 ### Notices
@@ -84,11 +124,13 @@ These two concepts are notable: `input` and `output`. The `input` is the data so
 - `go run ./` will use `config.json` in current directory as the default config file, or use `go run ./ -c /path/to/your/own/config/file.json` to specify your own config file.
 - The generated files are located at `output` directory by default.
 - Run `go run ./ -h` for more usage information.
-- See `config-example.json` for more configuration options.
+- See [configuration.md](https://github.com/v2fly/geoip/blob/HEAD/configuration.md) for all configuration options.
 
 ## CLI showcase
 
-You can run `go install -v github.com/v2fly/geoip@latest` to install the CLI directly.
+You can run `go install -v github.com/v2fly/geoip@latest` to install the CLI tool directly.
+
+### Show help information
 
 ```bash
 $ ./geoip -h
@@ -96,8 +138,11 @@ Usage of ./geoip:
   -c string
     	Path to the config file (default "config.json")
   -l	List all available input and output formats
+```
 
+### Generate GeoIP files
 
+```bash
 $ ./geoip -c config.json
 2021/09/02 00:26:12 ✅ [v2rayGeoIPDat] geoip.dat --> output/dat
 2021/09/02 00:26:12 ✅ [v2rayGeoIPDat] geoip-only-cn-private.dat --> output/dat
@@ -105,8 +150,11 @@ $ ./geoip -c config.json
 2021/09/02 00:26:12 ✅ [v2rayGeoIPDat] private.dat --> output/dat
 2021/09/02 00:26:12 ✅ [v2rayGeoIPDat] test.dat --> output/dat
 2021/09/02 00:26:12 ✅ [text] cn.txt --> output/text
+```
 
+### List all supported formats
 
+```bash
 $ ./geoip -l
 All available input formats:
   - cutter (Remove data from previous steps)
@@ -124,7 +172,7 @@ All available output formats:
 
 ## Notice
 
-This product includes GeoLite2 data created by MaxMind, available from [MaxMind](http://www.maxmind.com).
+This product includes GeoLite2 data created by MaxMind, available from [MaxMind](https://www.maxmind.com).
 
 ## License
 
