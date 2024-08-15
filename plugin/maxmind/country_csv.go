@@ -59,6 +59,14 @@ func newGeoLite2CountryCSV(action lib.Action, data json.RawMessage) (lib.InputCo
 		tmp.IPv6File = defaultIPv6File
 	}
 
+	// Filter want list
+	wantList := make(map[string]bool)
+	for _, want := range tmp.Want {
+		if want = strings.ToUpper(strings.TrimSpace(want)); want != "" {
+			wantList[want] = true
+		}
+	}
+
 	return &geoLite2CountryCSV{
 		Type:            typeCountryCSV,
 		Action:          action,
@@ -66,7 +74,7 @@ func newGeoLite2CountryCSV(action lib.Action, data json.RawMessage) (lib.InputCo
 		CountryCodeFile: tmp.CountryCodeFile,
 		IPv4File:        tmp.IPv4File,
 		IPv6File:        tmp.IPv6File,
-		Want:            tmp.Want,
+		Want:            wantList,
 		OnlyIPType:      tmp.OnlyIPType,
 	}, nil
 }
@@ -78,7 +86,7 @@ type geoLite2CountryCSV struct {
 	CountryCodeFile string
 	IPv4File        string
 	IPv6File        string
-	Want            []string
+	Want            map[string]bool
 	OnlyIPType      lib.IPType
 }
 
@@ -171,11 +179,16 @@ func (g *geoLite2CountryCSV) getCountryCode() (map[string]string, error) {
 		}
 
 		id := strings.TrimSpace(line[0])
-		countryCode := strings.TrimSpace(line[4])
+		countryCode := strings.ToUpper(strings.TrimSpace(line[4]))
 		if id == "" || countryCode == "" {
 			continue
 		}
-		ccMap[id] = strings.ToUpper(countryCode)
+
+		if len(g.Want) > 0 && !g.Want[countryCode] {
+			continue
+		}
+
+		ccMap[id] = countryCode
 	}
 
 	if len(ccMap) == 0 {
@@ -206,14 +219,6 @@ func (g *geoLite2CountryCSV) process(file string, ccMap map[string]string, entri
 	}
 	defer f.Close()
 
-	// Filter want list
-	wantList := make(map[string]bool)
-	for _, want := range g.Want {
-		if want = strings.ToUpper(strings.TrimSpace(want)); want != "" {
-			wantList[want] = true
-		}
-	}
-
 	reader := csv.NewReader(f)
 	reader.Read() // skip header
 
@@ -243,9 +248,6 @@ func (g *geoLite2CountryCSV) process(file string, ccMap map[string]string, entri
 		}
 
 		if countryCode, found := ccMap[ccID]; found {
-			if len(wantList) > 0 && !wantList[countryCode] {
-				continue
-			}
 			cidrStr := strings.ToLower(strings.TrimSpace(record[0]))
 			entry, found := entries[countryCode]
 			if !found {
