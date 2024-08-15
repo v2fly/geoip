@@ -35,6 +35,9 @@ func newTextOut(action lib.Action, data json.RawMessage) (lib.OutputConverter, e
 		OutputDir  string     `json:"outputDir"`
 		Want       []string   `json:"wantedList"`
 		OnlyIPType lib.IPType `json:"onlyIPType"`
+
+		AddPrefixInLine string `json:"addPrefixInLine"`
+		AddSuffixInLine string `json:"addSuffixInLine"`
 	}
 
 	if len(data) > 0 {
@@ -62,6 +65,9 @@ func newTextOut(action lib.Action, data json.RawMessage) (lib.OutputConverter, e
 		OutputDir:   tmp.OutputDir,
 		Want:        wantList,
 		OnlyIPType:  tmp.OnlyIPType,
+
+		AddPrefixInLine: tmp.AddPrefixInLine,
+		AddSuffixInLine: tmp.AddSuffixInLine,
 	}, nil
 }
 
@@ -72,6 +78,9 @@ type textOut struct {
 	OutputDir   string
 	Want        []string
 	OnlyIPType  lib.IPType
+
+	AddPrefixInLine string
+	AddSuffixInLine string
 }
 
 func (t *textOut) GetType() string {
@@ -164,7 +173,13 @@ func (t *textOut) marshalText(entry *lib.Entry) ([]string, error) {
 func (t *textOut) writeFile(filename string, cidrList []string) error {
 	var buf bytes.Buffer
 	for _, cidr := range cidrList {
+		if t.AddPrefixInLine != "" {
+			buf.WriteString(t.AddPrefixInLine)
+		}
 		buf.WriteString(cidr)
+		if t.AddSuffixInLine != "" {
+			buf.WriteString(t.AddSuffixInLine)
+		}
 		buf.WriteString("\n")
 	}
 	cidrBytes := buf.Bytes()
