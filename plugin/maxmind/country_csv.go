@@ -145,13 +145,20 @@ func (g *geoLite2CountryCSV) Input(container lib.Container) (lib.Container, erro
 }
 
 func (g *geoLite2CountryCSV) getCountryCode() (map[string]string, error) {
-	ccReader, err := os.Open(g.CountryCodeFile)
+	var f io.ReadCloser
+	var err error
+	switch {
+	case strings.HasPrefix(strings.ToLower(g.CountryCodeFile), "http://"), strings.HasPrefix(strings.ToLower(g.CountryCodeFile), "https://"):
+		f, err = lib.GetRemoteURLReader(g.CountryCodeFile)
+	default:
+		f, err = os.Open(g.CountryCodeFile)
+	}
 	if err != nil {
 		return nil, err
 	}
-	defer ccReader.Close()
+	defer f.Close()
 
-	reader := csv.NewReader(ccReader)
+	reader := csv.NewReader(f)
 	lines, err := reader.ReadAll()
 	if err != nil {
 		return nil, err
@@ -186,6 +193,19 @@ func (g *geoLite2CountryCSV) process(file string, ccMap map[string]string, entri
 		entries = make(map[string]*lib.Entry, 300)
 	}
 
+	var f io.ReadCloser
+	var err error
+	switch {
+	case strings.HasPrefix(strings.ToLower(file), "http://"), strings.HasPrefix(strings.ToLower(file), "https://"):
+		f, err = lib.GetRemoteURLReader(file)
+	default:
+		f, err = os.Open(file)
+	}
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
 	// Filter want list
 	wantList := make(map[string]bool)
 	for _, want := range g.Want {
@@ -194,13 +214,7 @@ func (g *geoLite2CountryCSV) process(file string, ccMap map[string]string, entri
 		}
 	}
 
-	fReader, err := os.Open(file)
-	if err != nil {
-		return err
-	}
-	defer fReader.Close()
-
-	reader := csv.NewReader(fReader)
+	reader := csv.NewReader(f)
 	reader.Read() // skip header
 
 	for {
