@@ -191,9 +191,10 @@ Supported `output` formats:
 - **type**: (required) the name of the input format
 - **action**: (required) action type, the value could be `add`(to add IP / CIDR) or `remove`(to remove IP / CIDR)
 - **args**: (required)
-  - **name**: the list name (cannot be used with `inputDir`; must be used with `uri`)
-  - **uri**: the path to plaintext txt file, can be local file path or remote `http` or `https` URL (cannot be used with `inputDir`; must be used with `name`)
-  - **inputDir**: the directory of the files to walk through (excluded children directories). (the filename will be the list name; cannot be used with `name` or `uri`)
+  - **name**: (optional) the list name (cannot be used with `inputDir`; must be used with `uri` or `ipOrCIDR`)
+  - **uri**: (optional) the path to plaintext txt file, can be local file path or remote `http` or `https` URL (cannot be used with `inputDir`; must be used with `name`; can be used with `ipOrCIDR`)
+  - **ipOrCIDR**: (optional, array) an array of plaintext IP addresses or CIDRs (cannot be used with `inputDir`; must be used with `name`; can be used with `uri`)
+  - **inputDir**: (optional) the directory of the files to walk through (excluded children directories). (the filename will be the list name; cannot be used with `name` or `uri` or `ipOrCIDR`)
   - **wantedList**: (optional, array) specified wanted files. (used with `inputDir`)
   - **onlyIPType**: (optional) the IP address type to be processed, the value is `ipv4` or `ipv6`
   - **removePrefixesInLine**: (optional, array) the array of string prefixes to be removed in each line
@@ -202,12 +203,46 @@ Supported `output` formats:
 ```jsonc
 {
   "type": "text",
-  "action": "add",                                 // add IP or CIDR
+  "action": "add",                                // add IP or CIDR
   "args": {
     "name": "cn",
     "uri": "./cn.txt",                            // get IPv4 and IPv6 addresses from local file cn.txt, and add to list cn
     "removePrefixesInLine": ["Host,", "IP-CIDR"], // remove all prefixes from each line of the file
     "removeSuffixesInLine": [",no-resolve"]       // remove all suffixes from each line of the file
+  }
+}
+```
+
+```jsonc
+{
+  "type": "text",
+  "action": "add",                        // add IP or CIDR
+  "args": {
+    "name": "cn",
+    "ipOrCIDR": ["1.0.0.1", "1.0.0.1/24"] // add IP or CIDR to cn list
+  }
+}
+```
+
+```jsonc
+{
+  "type": "text",
+  "action": "remove",                     // remove IP or CIDR
+  "args": {
+    "name": "cn",
+    "ipOrCIDR": ["1.0.0.1", "1.0.0.1/24"] // remove IP or CIDR from cn list
+  }
+}
+```
+
+```jsonc
+{
+  "type": "text",
+  "action": "add",                        // add IP or CIDR
+  "args": {
+    "name": "cn",
+    "uri": "./cn.txt",                    // get IPv4 and IPv6 addresses from local file cn.txt, and add to list cn
+    "ipOrCIDR": ["1.0.0.1", "1.0.0.1/24"] // add IP or CIDR to cn list
   }
 }
 ```

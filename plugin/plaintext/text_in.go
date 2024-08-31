@@ -32,6 +32,7 @@ func newTextIn(action lib.Action, data json.RawMessage) (lib.InputConverter, err
 	var tmp struct {
 		Name       string     `json:"name"`
 		URI        string     `json:"uri"`
+		IPOrCIDR   []string   `json:"ipOrCIDR"`
 		InputDir   string     `json:"inputDir"`
 		Want       []string   `json:"wantedList"`
 		OnlyIPType lib.IPType `json:"onlyIPType"`
@@ -46,12 +47,15 @@ func newTextIn(action lib.Action, data json.RawMessage) (lib.InputConverter, err
 		}
 	}
 
-	if tmp.Name == "" && tmp.URI == "" && tmp.InputDir == "" {
-		return nil, fmt.Errorf("type %s | action %s missing inputdir or name or uri", typeTextIn, action)
-	}
-
-	if (tmp.Name != "" && tmp.URI == "") || (tmp.Name == "" && tmp.URI != "") {
-		return nil, fmt.Errorf("type %s | action %s name & uri must be specified together", typeTextIn, action)
+	if tmp.InputDir == "" {
+		if tmp.Name == "" {
+			return nil, fmt.Errorf("❌ [type %s | action %s] missing inputDir or name", typeTextIn, action)
+		}
+		if tmp.URI == "" && len(tmp.IPOrCIDR) == 0 {
+			return nil, fmt.Errorf("❌ [type %s | action %s] missing uri or ipOrCIDR", typeTextIn, action)
+		}
+	} else if tmp.Name != "" || tmp.URI != "" || len(tmp.IPOrCIDR) > 0 {
+		return nil, fmt.Errorf("❌ [type %s | action %s] inputDir is not allowed to be used with name or uri or ipOrCIDR", typeTextIn, action)
 	}
 
 	// Filter want list
@@ -68,6 +72,7 @@ func newTextIn(action lib.Action, data json.RawMessage) (lib.InputConverter, err
 		Description: descTextIn,
 		Name:        tmp.Name,
 		URI:         tmp.URI,
+		IPOrCIDR:    tmp.IPOrCIDR,
 		InputDir:    tmp.InputDir,
 		Want:        wantList,
 		OnlyIPType:  tmp.OnlyIPType,
@@ -83,6 +88,7 @@ type textIn struct {
 	Description string
 	Name        string
 	URI         string
+	IPOrCIDR    []string
 	InputDir    string
 	Want        map[string]bool
 	OnlyIPType  lib.IPType
@@ -110,6 +116,7 @@ func (t *textIn) Input(container lib.Container) (lib.Container, error) {
 	switch {
 	case t.InputDir != "":
 		err = t.walkDir(t.InputDir, entries)
+
 	case t.Name != "" && t.URI != "":
 		switch {
 		case strings.HasPrefix(strings.ToLower(t.URI), "http://"), strings.HasPrefix(strings.ToLower(t.URI), "https://"):
@@ -117,8 +124,17 @@ func (t *textIn) Input(container lib.Container) (lib.Container, error) {
 		default:
 			err = t.walkLocalFile(t.URI, t.Name, entries)
 		}
+		if err != nil {
+			return nil, err
+		}
+
+		fallthrough
+
+	case t.Name != "" && len(t.IPOrCIDR) > 0:
+		err = t.appendIPOrCIDR(t.IPOrCIDR, t.Name, entries)
+
 	default:
-		return nil, fmt.Errorf("config missing argument inputDir or name or uri")
+		return nil, fmt.Errorf("❌ [type %s | action %s] config missing argument inputDir or name or uri or ipOrCIDR", t.Type, t.Action)
 	}
 
 	if err != nil {
@@ -134,7 +150,7 @@ func (t *textIn) Input(container lib.Container) (lib.Container, error) {
 	}
 
 	if len(entries) == 0 {
-		return nil, fmt.Errorf("type %s | action %s no entry is generated", t.Type, t.Action)
+		return nil, fmt.Errorf("❌ [type %s | action %s] no entry is generated", t.Type, t.Action)
 	}
 
 	for _, entry := range entries {
@@ -277,6 +293,25 @@ func (t *textIn) scanFile(reader io.Reader, entry *lib.Entry) error {
 	if err := scanner.Err(); err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func (t *textIn) appendIPOrCIDR(ipOrCIDR []string, name string, entries map[string]*lib.Entry) error {
+	name = strings.ToUpper(name)
+
+	entry, found := entries[name]
+	if !found {
+		entry = lib.NewEntry(name)
+	}
+
+	for _, cidr := range ipOrCIDR {
+		if err := entry.AddPrefix(strings.TrimSpace(cidr)); err != nil {
+			return err
+		}
+	}
+
+	entries[name] = entry
 
 	return nil
 }

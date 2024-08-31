@@ -42,7 +42,7 @@ func newGeoIPDatIn(action lib.Action, data json.RawMessage) (lib.InputConverter,
 	}
 
 	if tmp.URI == "" {
-		return nil, fmt.Errorf("[type %s | action %s] uri must be specified in config", typeGeoIPdatIn, action)
+		return nil, fmt.Errorf("❌ [type %s | action %s] uri must be specified in config", typeGeoIPdatIn, action)
 	}
 
 	// Filter want list
