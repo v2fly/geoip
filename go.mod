@@ -8,7 +8,7 @@ require (
 	github.com/oschwald/maxminddb-golang v1.13.1
 	github.com/v2fly/v2ray-core/v5 v5.17.1
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba
-	google.golang.org/protobuf v1.34.2
+	google.golang.org/protobuf v1.35.1
 )
 
 require (
