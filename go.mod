@@ -1,11 +1,12 @@
 module github.com/v2fly/geoip
 
-go 1.22
+go 1.23
 
-toolchain go1.22.6
+toolchain go1.23.2
 
 require (
 	github.com/oschwald/maxminddb-golang v1.13.1
+	github.com/tailscale/hujson v0.0.0-20241010212012-29efb4a0184b
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba
 	google.golang.org/protobuf v1.35.1
 )

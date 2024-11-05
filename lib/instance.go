@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
+
+	"github.com/tailscale/hujson"
 )
 
 type Instance struct {
@@ -25,6 +27,9 @@ func (i *Instance) Init(configFile string) error {
 	if err != nil {
 		return err
 	}
+
+	// Support JSON with comments and trailing commas
+	content, _ = hujson.Standardize(content)
 
 	if err := json.Unmarshal(content, &i.config); err != nil {
 		return err
