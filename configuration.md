@@ -361,6 +361,7 @@ Supported `output` formats:
   - **outputDir**: (optional) path to the output directory
   - **outputExtension**: (optional) the extension of the output file
   - **wantedList**: (optional, array) specified wanted lists
+  - **excludedList**: (optional, array) specified lists to be excluded when output
   - **onlyIPType**: (optional) the IP address type to output, the value is `ipv4` or `ipv6`
   - **addPrefixInLine**: (optional) the prefix to be added in each line
   - **addSuffixInLine**: (optional) the suffix to be added in each line
@@ -420,6 +421,19 @@ Supported `output` formats:
 }
 ```
 
+```jsonc
+{
+  "type": "text",
+  "action": "output",
+  "args": {
+    "outputDir": "./text",              // output files to directory ./text
+    "outputExtension": ".conf",         // the extension of the output files are .conf
+    "excludedList": ["cn", "us", "jp"], //  exclude lists called cn, us, jp when output
+    "addPrefixInLine": "HOST,"
+  }
+}
+```
+
 ### **v2rayGeoIPDat**
 
 - **type**: (required) the name of the output format
@@ -428,6 +442,7 @@ Supported `output` formats:
   - **outputName**: (optional) the output filename
   - **outputDir**: (optional) path to the output directory
   - **wantedList**: (optional, array) specified wanted lists or files
+  - **excludedList**: (optional, array) specified lists to be excluded when output
   - **onlyIPType**: (optional) the IP address type to output, the value is `ipv4` or `ipv6`
   - **oneFilePerList**: (optional) output every single list to a new file, the value is `true` or `false`(default value)
 
@@ -458,6 +473,18 @@ Supported `output` formats:
     "outputDir": "./output",                   // output to ./output directory
     "outputName": "geoip-only-cn-private.dat", // output file called geoip-only-cn-private.dat
     "wantedList": ["cn", "private"]            // only output lists called cn, private
+  }
+}
+```
+
+```jsonc
+{
+  "type": "v2rayGeoIPDat",
+  "action": "output",
+  "args": {
+    "outputDir": "./output",                      // output to ./output directory
+    "outputName": "geoip-without-cn-private.dat", // output file called geoip-without-cn-private.dat
+    "excludedList": ["cn", "private"]             // exclude lists called cn, private when output
   }
 }
 ```
