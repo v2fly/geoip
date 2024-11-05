@@ -1,8 +1,3 @@
-// GeoIP generator
-//
-// Before running this file, the GeoIP database must be downloaded and present.
-// To download GeoIP database: https://dev.maxmind.com/geoip/geoip2/geolite2/
-// Inside you will find block files for IPv4 and IPv6 and country code mapping.
 package main
 
 import (
@@ -33,7 +28,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	if err := instance.Init(*configFile); err != nil {
+	if err := instance.InitConfig(*configFile); err != nil {
 		log.Fatal(err)
 	}
 
