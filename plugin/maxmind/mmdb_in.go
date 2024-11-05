@@ -14,7 +14,7 @@ import (
 
 const (
 	typeMaxmindMMDBIn = "maxmindMMDB"
-	descMaxmindMMDBIn = "Convert MaxMind mmdb database to other formats"
+	descMaxmindMMDBIn = "Convert MaxMind country mmdb database to other formats"
 )
 
 var (

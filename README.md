@@ -97,7 +97,7 @@ Supported `input` formats:
 
 - **cutter**: Remove data from previous steps
 - **maxmindGeoLite2CountryCSV**: Convert MaxMind GeoLite2 country CSV data to other formats
-- **maxmindMMDB**: Convert MaxMind mmdb database to other formats
+- **maxmindMMDB**: Convert MaxMind country mmdb database to other formats
 - **private**: Convert LAN and private network CIDR to other formats
 - **text**: Convert plaintext IP and CIDR to other formats
 - **v2rayGeoIPDat**: Convert V2Ray GeoIP dat to other formats
