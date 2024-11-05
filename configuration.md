@@ -169,6 +169,8 @@ Supported `output` formats:
 
 - **type**: (required) the name of the input format
 - **action**: (required) action type, the value could be `add`(to add IP / CIDR) or `remove`(to remove IP / CIDR)
+- **args**: (optional)
+  - **onlyIPType**: (optional) the IP address type to be processed, the value is `ipv4` or `ipv6`
 
 > The default CIDRs to be added to or removed from `private`, see [private.go](https://github.com/v2fly/geoip/blob/HEAD/plugin/special/private.go#L16-L36).
 
@@ -183,6 +185,26 @@ Supported `output` formats:
 {
   "type": "private",
   "action": "remove" // remove IP or CIDR
+}
+```
+
+```jsonc
+{
+  "type": "private",
+  "action": "add",       // add IP or CIDR
+  "args": {
+    "onlyIPType": "ipv4" // add IPv4 addresses only
+  }
+}
+```
+
+```jsonc
+{
+  "type": "private",
+  "action": "remove",    // remove IP or CIDR
+  "args": {
+    "onlyIPType": "ipv6" // remove IPv6 addresses only
+  }
 }
 ```
 
