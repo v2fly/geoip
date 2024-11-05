@@ -33,6 +33,7 @@ func init() {
 func newTextOut(action lib.Action, data json.RawMessage) (lib.OutputConverter, error) {
 	var tmp struct {
 		OutputDir  string     `json:"outputDir"`
+		OutputExt  string     `json:"outputExtension"`
 		Want       []string   `json:"wantedList"`
 		OnlyIPType lib.IPType `json:"onlyIPType"`
 
@@ -50,6 +51,10 @@ func newTextOut(action lib.Action, data json.RawMessage) (lib.OutputConverter, e
 		tmp.OutputDir = defaultOutputDir
 	}
 
+	if tmp.OutputExt == "" {
+		tmp.OutputExt = ".txt"
+	}
+
 	// Filter want list
 	wantList := make([]string, 0, len(tmp.Want))
 	for _, want := range tmp.Want {
@@ -63,6 +68,7 @@ func newTextOut(action lib.Action, data json.RawMessage) (lib.OutputConverter, e
 		Action:      action,
 		Description: descTextOut,
 		OutputDir:   tmp.OutputDir,
+		OutputExt:   tmp.OutputExt,
 		Want:        wantList,
 		OnlyIPType:  tmp.OnlyIPType,
 
@@ -76,6 +82,7 @@ type textOut struct {
 	Action      lib.Action
 	Description string
 	OutputDir   string
+	OutputExt   string
 	Want        []string
 	OnlyIPType  lib.IPType
 
@@ -116,7 +123,7 @@ func (t *textOut) Output(container lib.Container) error {
 			if err != nil {
 				return err
 			}
-			filename := strings.ToLower(entry.GetName()) + ".txt"
+			filename := strings.ToLower(entry.GetName()) + t.OutputExt
 			if err := t.writeFile(filename, cidrList); err != nil {
 				return err
 			}
@@ -136,7 +143,7 @@ func (t *textOut) Output(container lib.Container) error {
 			if err != nil {
 				return err
 			}
-			filename := strings.ToLower(entry.GetName()) + ".txt"
+			filename := strings.ToLower(entry.GetName()) + t.OutputExt
 			if err := t.writeFile(filename, cidrList); err != nil {
 				return err
 			}
