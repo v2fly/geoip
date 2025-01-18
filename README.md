@@ -157,7 +157,7 @@ $ ./geoip -l
 All available input formats:
   - cutter (Remove data from previous steps)
   - maxmindGeoLite2CountryCSV (Convert MaxMind GeoLite2 country CSV data to other formats)
-  - maxmindMMDB (Convert MaxMind mmdb database to other formats)
+  - maxmindMMDB (Convert MaxMind GeoLite2 country mmdb database to other formats)
   - private (Convert LAN and private network CIDR to other formats)
   - test (Convert specific CIDR to other formats (for test only))
   - text (Convert plaintext IP and CIDR to other formats)

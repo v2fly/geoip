@@ -27,14 +27,14 @@ var (
 
 func init() {
 	lib.RegisterOutputConfigCreator(typeGeoIPdatOut, func(action lib.Action, data json.RawMessage) (lib.OutputConverter, error) {
-		return newGeoIPDat(action, data)
+		return newGeoIPDatOut(action, data)
 	})
-	lib.RegisterOutputConverter(typeGeoIPdatOut, &geoIPDatOut{
+	lib.RegisterOutputConverter(typeGeoIPdatOut, &geoipDatOut{
 		Description: descGeoIPdatOut,
 	})
 }
 
-func newGeoIPDat(action lib.Action, data json.RawMessage) (lib.OutputConverter, error) {
+func newGeoIPDatOut(action lib.Action, data json.RawMessage) (lib.OutputConverter, error) {
 	var tmp struct {
 		OutputName     string     `json:"outputName"`
 		OutputDir      string     `json:"outputDir"`
@@ -58,7 +58,7 @@ func newGeoIPDat(action lib.Action, data json.RawMessage) (lib.OutputConverter, 
 		tmp.OutputDir = defaultOutputDir
 	}
 
-	return &geoIPDatOut{
+	return &geoipDatOut{
 		Type:           typeGeoIPdatOut,
 		Action:         action,
 		Description:    descGeoIPdatOut,
@@ -71,7 +71,7 @@ func newGeoIPDat(action lib.Action, data json.RawMessage) (lib.OutputConverter, 
 	}, nil
 }
 
-type geoIPDatOut struct {
+type geoipDatOut struct {
 	Type           string
 	Action         lib.Action
 	Description    string
@@ -83,19 +83,19 @@ type geoIPDatOut struct {
 	OnlyIPType     lib.IPType
 }
 
-func (g *geoIPDatOut) GetType() string {
+func (g *geoipDatOut) GetType() string {
 	return g.Type
 }
 
-func (g *geoIPDatOut) GetAction() lib.Action {
+func (g *geoipDatOut) GetAction() lib.Action {
 	return g.Action
 }
 
-func (g *geoIPDatOut) GetDescription() string {
+func (g *geoipDatOut) GetDescription() string {
 	return g.Description
 }
 
-func (g *geoIPDatOut) Output(container lib.Container) error {
+func (g *geoipDatOut) Output(container lib.Container) error {
 	geoIPList := new(GeoIPList)
 	geoIPList.Entry = make([]*GeoIP, 0, 300)
 	updated := false
@@ -145,7 +145,7 @@ func (g *geoIPDatOut) Output(container lib.Container) error {
 	return nil
 }
 
-func (g *geoIPDatOut) filterAndSortList(container lib.Container) []string {
+func (g *geoipDatOut) filterAndSortList(container lib.Container) []string {
 	excludeMap := make(map[string]bool)
 	for _, exclude := range g.Exclude {
 		if exclude = strings.ToUpper(strings.TrimSpace(exclude)); exclude != "" {
@@ -181,7 +181,7 @@ func (g *geoIPDatOut) filterAndSortList(container lib.Container) []string {
 	return list
 }
 
-func (g *geoIPDatOut) generateGeoIP(entry *lib.Entry) (*GeoIP, error) {
+func (g *geoipDatOut) generateGeoIP(entry *lib.Entry) (*GeoIP, error) {
 	var entryCidr []netip.Prefix
 	var err error
 	switch g.OnlyIPType {
@@ -215,13 +215,13 @@ func (g *geoIPDatOut) generateGeoIP(entry *lib.Entry) (*GeoIP, error) {
 }
 
 // Sort by country code to make reproducible builds
-func (g *geoIPDatOut) sort(list *GeoIPList) {
+func (g *geoipDatOut) sort(list *GeoIPList) {
 	sort.SliceStable(list.Entry, func(i, j int) bool {
 		return list.Entry[i].CountryCode < list.Entry[j].CountryCode
 	})
 }
 
-func (g *geoIPDatOut) writeFile(filename string, geoIPBytes []byte) error {
+func (g *geoipDatOut) writeFile(filename string, geoIPBytes []byte) error {
 	if err := os.MkdirAll(g.OutputDir, 0755); err != nil {
 		return err
 	}

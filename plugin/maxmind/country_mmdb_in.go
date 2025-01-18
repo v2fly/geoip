@@ -13,24 +13,24 @@ import (
 )
 
 const (
-	typeMaxmindMMDBIn = "maxmindMMDB"
-	descMaxmindMMDBIn = "Convert MaxMind country mmdb database to other formats"
+	typeGeoLite2CountryMMDBIn = "maxmindMMDB"
+	descGeoLite2CountryMMDBIn = "Convert MaxMind GeoLite2 country mmdb database to other formats"
 )
 
 var (
-	defaultMMDBFile = filepath.Join("./", "geolite2", "GeoLite2-Country.mmdb")
+	defaultGeoLite2CountryMMDBFile = filepath.Join("./", "geolite2", "GeoLite2-Country.mmdb")
 )
 
 func init() {
-	lib.RegisterInputConfigCreator(typeMaxmindMMDBIn, func(action lib.Action, data json.RawMessage) (lib.InputConverter, error) {
-		return newMaxmindMMDBIn(action, data)
+	lib.RegisterInputConfigCreator(typeGeoLite2CountryMMDBIn, func(action lib.Action, data json.RawMessage) (lib.InputConverter, error) {
+		return newGeoLite2CountryMMDBIn(action, data)
 	})
-	lib.RegisterInputConverter(typeMaxmindMMDBIn, &maxmindMMDBIn{
-		Description: descMaxmindMMDBIn,
+	lib.RegisterInputConverter(typeGeoLite2CountryMMDBIn, &geoLite2CountryMMDBIn{
+		Description: descGeoLite2CountryMMDBIn,
 	})
 }
 
-func newMaxmindMMDBIn(action lib.Action, data json.RawMessage) (lib.InputConverter, error) {
+func newGeoLite2CountryMMDBIn(action lib.Action, data json.RawMessage) (lib.InputConverter, error) {
 	var tmp struct {
 		URI        string     `json:"uri"`
 		Want       []string   `json:"wantedList"`
@@ -44,7 +44,7 @@ func newMaxmindMMDBIn(action lib.Action, data json.RawMessage) (lib.InputConvert
 	}
 
 	if tmp.URI == "" {
-		tmp.URI = defaultMMDBFile
+		tmp.URI = defaultGeoLite2CountryMMDBFile
 	}
 
 	// Filter want list
@@ -55,17 +55,17 @@ func newMaxmindMMDBIn(action lib.Action, data json.RawMessage) (lib.InputConvert
 		}
 	}
 
-	return &maxmindMMDBIn{
-		Type:        typeMaxmindMMDBIn,
+	return &geoLite2CountryMMDBIn{
+		Type:        typeGeoLite2CountryMMDBIn,
 		Action:      action,
-		Description: descMaxmindMMDBIn,
+		Description: descGeoLite2CountryMMDBIn,
 		URI:         tmp.URI,
 		Want:        wantList,
 		OnlyIPType:  tmp.OnlyIPType,
 	}, nil
 }
 
-type maxmindMMDBIn struct {
+type geoLite2CountryMMDBIn struct {
 	Type        string
 	Action      lib.Action
 	Description string
@@ -74,43 +74,43 @@ type maxmindMMDBIn struct {
 	OnlyIPType  lib.IPType
 }
 
-func (m *maxmindMMDBIn) GetType() string {
-	return m.Type
+func (g *geoLite2CountryMMDBIn) GetType() string {
+	return g.Type
 }
 
-func (m *maxmindMMDBIn) GetAction() lib.Action {
-	return m.Action
+func (g *geoLite2CountryMMDBIn) GetAction() lib.Action {
+	return g.Action
 }
 
-func (m *maxmindMMDBIn) GetDescription() string {
-	return m.Description
+func (g *geoLite2CountryMMDBIn) GetDescription() string {
+	return g.Description
 }
 
-func (m *maxmindMMDBIn) Input(container lib.Container) (lib.Container, error) {
+func (g *geoLite2CountryMMDBIn) Input(container lib.Container) (lib.Container, error) {
 	var content []byte
 	var err error
 	switch {
-	case strings.HasPrefix(strings.ToLower(m.URI), "http://"), strings.HasPrefix(strings.ToLower(m.URI), "https://"):
-		content, err = lib.GetRemoteURLContent(m.URI)
+	case strings.HasPrefix(strings.ToLower(g.URI), "http://"), strings.HasPrefix(strings.ToLower(g.URI), "https://"):
+		content, err = lib.GetRemoteURLContent(g.URI)
 	default:
-		content, err = os.ReadFile(m.URI)
+		content, err = os.ReadFile(g.URI)
 	}
 	if err != nil {
 		return nil, err
 	}
 
 	entries := make(map[string]*lib.Entry, 300)
-	err = m.generateEntries(content, entries)
+	err = g.generateEntries(content, entries)
 	if err != nil {
 		return nil, err
 	}
 
 	if len(entries) == 0 {
-		return nil, fmt.Errorf("❌ [type %s | action %s] no entry is generated", typeMaxmindMMDBIn, m.Action)
+		return nil, fmt.Errorf("❌ [type %s | action %s] no entry is generated", typeGeoLite2CountryMMDBIn, g.Action)
 	}
 
 	var ignoreIPType lib.IgnoreIPOption
-	switch m.OnlyIPType {
+	switch g.OnlyIPType {
 	case lib.IPv4:
 		ignoreIPType = lib.IgnoreIPv6
 	case lib.IPv6:
@@ -118,7 +118,7 @@ func (m *maxmindMMDBIn) Input(container lib.Container) (lib.Container, error) {
 	}
 
 	for _, entry := range entries {
-		switch m.Action {
+		switch g.Action {
 		case lib.ActionAdd:
 			if err := container.Add(entry, ignoreIPType); err != nil {
 				return nil, err
@@ -135,7 +135,7 @@ func (m *maxmindMMDBIn) Input(container lib.Container) (lib.Container, error) {
 	return container, nil
 }
 
-func (m *maxmindMMDBIn) generateEntries(content []byte, entries map[string]*lib.Entry) error {
+func (g *geoLite2CountryMMDBIn) generateEntries(content []byte, entries map[string]*lib.Entry) error {
 	db, err := maxminddb.FromBytes(content)
 	if err != nil {
 		return err
@@ -162,7 +162,7 @@ func (m *maxmindMMDBIn) generateEntries(content []byte, entries map[string]*lib.
 			continue
 		}
 
-		if len(m.Want) > 0 && !m.Want[name] {
+		if len(g.Want) > 0 && !g.Want[name] {
 			continue
 		}
 
