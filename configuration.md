@@ -18,6 +18,7 @@ Supported `input` formats:
 - **cutter**: Remove data from previous steps
 - **maxmindGeoLite2CountryCSV**: Convert MaxMind GeoLite2 country CSV data to other formats
 - **maxmindMMDB**: Convert MaxMind GeoLite2 country mmdb database to other formats
+- **dbipCountryMMDB**: Convert DB-IP lite country mmdb database to other formats
 - **private**: Convert LAN and private network CIDR to other formats
 - **text**: Convert plaintext IP and CIDR to other formats
 - **v2rayGeoIPDat**: Convert V2Ray GeoIP dat to other formats
@@ -156,6 +157,58 @@ Supported `output` formats:
 ```jsonc
 {
   "type": "maxmindMMDB",
+  "action": "remove",                    // add IP or CIDR
+  "args": {
+    "uri": "https://example.com/my.mmdb",
+    "wantedList": ["cn", "us", "jp"],    // only to remove IPv4 addresses from lists called cn, us, jp
+    "onlyIPType": "ipv4"                 // only to remove IPv4 addresses
+  }
+}
+```
+
+### **dbipCountryMMDB**
+
+- **type**: (required) the name of the input format
+- **action**: (required) action type, the value could be `add`(to add IP / CIDR) or `remove`(to remove IP / CIDR)
+- **args**: (optional)
+  - **uri**: (optional) the path to DB-IP lite Country mmdb file(`dbip-country-lite.mmdb`), can be local file path or remote `http` or `https` URL
+  - **wantedList**: (optional, array) specified wanted lists
+  - **onlyIPType**: (optional) the IP address type to be processed, the value is `ipv4` or `ipv6`
+
+```jsonc
+// The file to be used by default:
+// ./db-ip/dbip-country-lite.mmdb
+{
+  "type": "dbipCountryMMDB",
+  "action": "add"       // add IP or CIDR
+}
+```
+
+```jsonc
+{
+  "type": "dbipCountryMMDB",
+  "action": "add",       // add IP or CIDR
+  "args": {
+    "uri": "./db-ip/dbip-country-lite.mmdb"
+  }
+}
+```
+
+```jsonc
+{
+  "type": "dbipCountryMMDB",
+  "action": "add",                        // add IP or CIDR
+  "args": {
+    "uri": "https://example.com/my.mmdb",
+    "wantedList": ["cn", "us", "jp"],    // add IPv4 addresses to lists called cn, us, jp
+    "onlyIPType": "ipv4"                 // only to add IPv4 addresses
+  }
+}
+```
+
+```jsonc
+{
+  "type": "dbipCountryMMDB",
   "action": "remove",                    // add IP or CIDR
   "args": {
     "uri": "https://example.com/my.mmdb",

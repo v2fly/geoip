@@ -118,7 +118,6 @@ Supported `output` formats:
 
 ### Notices
 
-- If input format `maxmindGeoLite2CountryCSV` is specified in config file, you must first download `GeoLite2-Country-CSV.zip` from [MaxMind](https://dev.maxmind.com/geoip/geoip2/geolite2/), then unzip it to `geolite2` directory.
 - `go run ./` will use `config.json` in current directory as the default config file, or use `go run ./ -c /path/to/your/own/config/file.json` to specify your own config file.
 - The generated files are located at `output` directory by default.
 - Run `go run ./ -h` for more usage information.
@@ -156,6 +155,7 @@ $ ./geoip -c config.json
 $ ./geoip -l
 All available input formats:
   - cutter (Remove data from previous steps)
+  - dbipCountryMMDB (Convert DB-IP lite country mmdb database to other formats)
   - maxmindGeoLite2CountryCSV (Convert MaxMind GeoLite2 country CSV data to other formats)
   - maxmindMMDB (Convert MaxMind GeoLite2 country mmdb database to other formats)
   - private (Convert LAN and private network CIDR to other formats)
