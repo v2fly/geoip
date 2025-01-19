@@ -1,6 +1,6 @@
 # GeoIP for V2Ray
 
-This project releases GeoIP files automatically every Thursday for routing purpose in Project V. It also provides a command line interface(CLI) tool for users to customize their own GeoIP files.
+This project releases GeoIP files monthly for routing purpose in Project V. It also provides a command line interface(CLI) tool for users to customize their own GeoIP files.
 
 ## Download links
 
@@ -168,10 +168,8 @@ All available output formats:
   - v2rayGeoIPDat (Convert data to V2Ray GeoIP dat format)
 ```
 
-## Notice
-
-This product includes GeoLite2 data created by MaxMind, available from [MaxMind](https://www.maxmind.com).
-
 ## License
 
-[CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/)
+This project is licensed under [CC-BY-SA-4.0](https://creativecommons.org/licenses/by-sa/4.0/) license.
+
+The free [IP Geolocation data by DB-IP](https://db-ip.com) is licensed under [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/) license.
