@@ -7,7 +7,7 @@ require (
 	github.com/oschwald/maxminddb-golang v1.13.1
 	github.com/tailscale/hujson v0.0.0-20250605163823-992244df8c5a
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba
-	google.golang.org/protobuf v1.36.8
+	google.golang.org/protobuf v1.36.9
 )
 
 require golang.org/x/sys v0.21.0 // indirect
