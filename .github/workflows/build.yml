@@ -12,6 +12,15 @@ on:
       - ".gitignore"
       - "LICENSE"
       - "**/dependabot.yml"
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - "README.md"
+      - "configuration.md"
+      - ".gitignore"
+      - "LICENSE"
+      - "**/dependabot.yml"
 
 permissions:
   contents: write
@@ -61,6 +70,7 @@ jobs:
           done
 
       - name: Git push assets to "release" branch
+        if: github.event_name == 'push'
         run: |
           cd output || exit 1
           git init
@@ -73,6 +83,7 @@ jobs:
           git push -f geoip release
 
       - name: Release and upload assets
+        if: github.event_name == 'push'
         run: |
           gh release create ${{ env.TAG_NAME }} -t ${{ env.RELEASE_NAME }} \
             ./output/geoip.dat \
