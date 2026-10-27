@@ -157,7 +157,7 @@ Supported `output` formats:
 ```jsonc
 {
   "type": "maxmindMMDB",
-  "action": "remove",                    // add IP or CIDR
+  "action": "remove",                    // remove IP or CIDR
   "args": {
     "uri": "https://example.com/my.mmdb",
     "wantedList": ["cn", "us", "jp"],    // only to remove IPv4 addresses from lists called cn, us, jp
@@ -209,7 +209,7 @@ Supported `output` formats:
 ```jsonc
 {
   "type": "dbipCountryMMDB",
-  "action": "remove",                    // add IP or CIDR
+  "action": "remove",                    // remove IP or CIDR
   "args": {
     "uri": "https://example.com/my.mmdb",
     "wantedList": ["cn", "us", "jp"],    // only to remove IPv4 addresses from lists called cn, us, jp
@@ -225,7 +225,7 @@ Supported `output` formats:
 - **args**: (optional)
   - **onlyIPType**: (optional) the IP address type to be processed, the value is `ipv4` or `ipv6`
 
-> The default CIDRs to be added to or removed from `private`, see [private.go](https://github.com/v2fly/geoip/blob/HEAD/plugin/special/private.go#L16-L36).
+> The default CIDRs to be added to or removed from `private`, see [private.go](https://github.com/v2fly/geoip/blob/HEAD/plugin/special/private.go#L18-L49).
 
 ```jsonc
 {
@@ -481,7 +481,7 @@ Supported `output` formats:
   "args": {
     "outputDir": "./text",              // output files to directory ./text
     "outputExtension": ".conf",         // the extension of the output files are .conf
-    "excludedList": ["cn", "us", "jp"], //  exclude lists called cn, us, jp when output
+    "excludedList": ["cn", "us", "jp"], // exclude lists called cn, us, jp when output
     "addPrefixInLine": "HOST,"
   }
 }

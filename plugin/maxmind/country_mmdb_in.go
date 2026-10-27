@@ -142,6 +142,11 @@ func (g *geoLite2CountryMMDBIn) generateEntries(content []byte, entries map[stri
 	}
 	defer db.Close()
 
+	err = db.Verify()
+	if err != nil {
+		return err
+	}
+
 	for network := range db.Networks() {
 		var record geoip2.Country
 		err := network.Decode(&record)
