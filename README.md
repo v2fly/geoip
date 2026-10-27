@@ -1,6 +1,6 @@
 # GeoIP for V2Ray
 
-This project releases GeoIP files monthly for routing purpose in Project V. It also provides a command line interface(CLI) tool for users to customize their own GeoIP files.
+This project releases GeoIP files monthly for routing purpose in Project V. It also provides a command line interface (CLI) tool for users to customize their own GeoIP files.
 
 ## Download links
 
@@ -97,7 +97,7 @@ Supported `input` formats:
 
 - **cutter**: Remove data from previous steps
 - **maxmindGeoLite2CountryCSV**: Convert MaxMind GeoLite2 country CSV data to other formats
-- **maxmindMMDB**: Convert MaxMind country mmdb database to other formats
+- **maxmindMMDB**: Convert MaxMind GeoLite2 country mmdb database to other formats
 - **dbipCountryMMDB**: Convert DB-IP lite country mmdb database to other formats
 - **private**: Convert LAN and private network CIDR to other formats
 - **text**: Convert plaintext IP and CIDR to other formats

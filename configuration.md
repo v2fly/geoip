@@ -98,7 +98,7 @@ Supported `output` formats:
   "type": "maxmindGeoLite2CountryCSV",
   "action": "add",                   // add IP or CIDR
   "args": {
-    "wantedList": ["cn", "us", "jp"] // add IPv4 and IPv6 addresses to lists called cn, us, jp 
+    "wantedList": ["cn", "us", "jp"] // add IPv4 and IPv6 addresses to lists called cn, us, jp
   }
 }
 ```
@@ -107,7 +107,7 @@ Supported `output` formats:
 {
   "type": "maxmindGeoLite2CountryCSV",
   "action": "remove",                 // remove IP or CIDR
-  "args": {  
+  "args": {
     "wantedList": ["cn", "us", "jp"], // only to remove IPv6 addresses from lists called cn, us, jp
     "onlyIPType": "ipv6"              // only to remove IPv6 addresses
   }
@@ -119,7 +119,7 @@ Supported `output` formats:
 - **type**: (required) the name of the input format
 - **action**: (required) action type, the value could be `add`(to add IP / CIDR) or `remove`(to remove IP / CIDR)
 - **args**: (optional)
-  - **uri**: (optional) the path to MaxMind GeoLite2 Country mmdb file(`GeoLite2-Country.mmdb`), can be local file path or remote `http` or `https` URL
+  - **uri**: (optional) the path to MaxMind GeoLite2 Country mmdb file (`GeoLite2-Country.mmdb`), can be local file path or remote `http` or `https` URL
   - **wantedList**: (optional, array) specified wanted lists
   - **onlyIPType**: (optional) the IP address type to be processed, the value is `ipv4` or `ipv6`
 
@@ -157,7 +157,7 @@ Supported `output` formats:
 ```jsonc
 {
   "type": "maxmindMMDB",
-  "action": "remove",                    // add IP or CIDR
+  "action": "remove",                    // remove IP or CIDR
   "args": {
     "uri": "https://example.com/my.mmdb",
     "wantedList": ["cn", "us", "jp"],    // only to remove IPv4 addresses from lists called cn, us, jp
@@ -171,7 +171,7 @@ Supported `output` formats:
 - **type**: (required) the name of the input format
 - **action**: (required) action type, the value could be `add`(to add IP / CIDR) or `remove`(to remove IP / CIDR)
 - **args**: (optional)
-  - **uri**: (optional) the path to DB-IP lite Country mmdb file(`dbip-country-lite.mmdb`), can be local file path or remote `http` or `https` URL
+  - **uri**: (optional) the path to DB-IP lite Country mmdb file (`dbip-country-lite.mmdb`), can be local file path or remote `http` or `https` URL
   - **wantedList**: (optional, array) specified wanted lists
   - **onlyIPType**: (optional) the IP address type to be processed, the value is `ipv4` or `ipv6`
 
@@ -209,7 +209,7 @@ Supported `output` formats:
 ```jsonc
 {
   "type": "dbipCountryMMDB",
-  "action": "remove",                    // add IP or CIDR
+  "action": "remove",                    // remove IP or CIDR
   "args": {
     "uri": "https://example.com/my.mmdb",
     "wantedList": ["cn", "us", "jp"],    // only to remove IPv4 addresses from lists called cn, us, jp
@@ -427,7 +427,7 @@ Supported `output` formats:
   "action": "output",
   "args": {
     "outputDir": "./text",           // output files to directory ./text
-    "outputExtension": ".conf",      // the extension of the output files are .conf
+    "outputExtension": ".conf",      // the extension of the output files is .conf
     "addPrefixInLine": "IP-CIDR,",   // add prefix to each line
     "addSuffixInLine": ",no-resolve" // add suffix to each line
   }
@@ -440,7 +440,7 @@ Supported `output` formats:
   "action": "output",
   "args": {
     "outputDir": "./text",           // output files to directory ./text
-    "outputExtension": ".conf",      // the extension of the output files are .conf
+    "outputExtension": ".conf",      // the extension of the output files is .conf
     "addPrefixInLine": "IP-CIDR,",
     "addSuffixInLine": ",no-resolve"
   }
@@ -453,7 +453,7 @@ Supported `output` formats:
   "action": "output",
   "args": {
     "outputDir": "./text",            // output files to directory ./text
-    "outputExtension": ".conf",       // the extension of the output files are .conf
+    "outputExtension": ".conf",       // the extension of the output files is .conf
     "wantedList": ["cn", "us", "jp"], // output IPv4 and IPv6 addresses of lists called cn, us, jp
     "addPrefixInLine": "HOST,"        // add prefix to each line of each file
   }
@@ -466,7 +466,7 @@ Supported `output` formats:
   "action": "output",
   "args": {
     "outputDir": "./text",            // output files to directory ./text
-    "outputExtension": ".conf",       // the extension of the output files are .conf
+    "outputExtension": ".conf",       // the extension of the output files is .conf
     "wantedList": ["cn", "us", "jp"], // output only IPv4 addresses of lists called cn, us, jp
     "onlyIPType": "ipv4",             // output IPv4 addresses only
     "addSuffixInLine": ";"            // add suffix to each line of each file
@@ -480,8 +480,8 @@ Supported `output` formats:
   "action": "output",
   "args": {
     "outputDir": "./text",              // output files to directory ./text
-    "outputExtension": ".conf",         // the extension of the output files are .conf
-    "excludedList": ["cn", "us", "jp"], //  exclude lists called cn, us, jp when output
+    "outputExtension": ".conf",         // the extension of the output files is .conf
+    "excludedList": ["cn", "us", "jp"], // exclude lists called cn, us, jp when output
     "addPrefixInLine": "HOST,"
   }
 }
