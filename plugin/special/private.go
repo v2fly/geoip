@@ -84,10 +84,7 @@ func (p *private) GetDescription() string {
 }
 
 func (p *private) Input(container lib.Container) (lib.Container, error) {
-	entry, found := container.GetEntry(entryNamePrivate)
-	if !found {
-		entry = lib.NewEntry(entryNamePrivate)
-	}
+	entry := lib.NewEntry(entryNamePrivate)
 
 	for _, cidr := range privateCIDRs {
 		if err := entry.AddPrefix(cidr); err != nil {
