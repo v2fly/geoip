@@ -298,6 +298,10 @@ func (t *textIn) scanFile(reader io.Reader, entry *lib.Entry) error {
 }
 
 func (t *textIn) appendIPOrCIDR(ipOrCIDR []string, name string, entries map[string]*lib.Entry) error {
+	if len(ipOrCIDR) == 0 {
+		return nil
+	}
+
 	name = strings.ToUpper(name)
 
 	entry, found := entries[name]

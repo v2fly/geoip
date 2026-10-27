@@ -107,7 +107,7 @@ func (g *geoLite2CountryCSVIn) Input(container lib.Container) (lib.Container, er
 		return nil, err
 	}
 
-	entries := make(map[string]*lib.Entry, 300)
+	entries := make(map[string]*lib.Entry)
 
 	if g.IPv4File != "" {
 		if err := g.process(g.IPv4File, ccMap, entries); err != nil {
@@ -170,6 +170,9 @@ func (g *geoLite2CountryCSVIn) getCountryCode() (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	if len(lines) == 0 {
+		return nil, fmt.Errorf("❌ [type %s | action %s] empty country code file: %s", typeGeoLite2CountryCSVIn, g.Action, g.CountryCodeFile)
+	}
 
 	ccMap := make(map[string]string)
 	for _, line := range lines[1:] {
@@ -180,10 +183,6 @@ func (g *geoLite2CountryCSVIn) getCountryCode() (map[string]string, error) {
 		id := strings.TrimSpace(line[0])
 		countryCode := strings.ToUpper(strings.TrimSpace(line[4]))
 		if id == "" || countryCode == "" {
-			continue
-		}
-
-		if len(g.Want) > 0 && !g.Want[countryCode] {
 			continue
 		}
 
@@ -202,7 +201,7 @@ func (g *geoLite2CountryCSVIn) process(file string, ccMap map[string]string, ent
 		return fmt.Errorf("❌ [type %s | action %s] invalid country code data", typeGeoLite2CountryCSVIn, g.Action)
 	}
 	if entries == nil {
-		entries = make(map[string]*lib.Entry, 300)
+		entries = make(map[string]*lib.Entry)
 	}
 
 	var f io.ReadCloser
@@ -234,29 +233,35 @@ func (g *geoLite2CountryCSVIn) process(file string, ccMap map[string]string, ent
 			return fmt.Errorf("❌ [type %s | action %s] invalid record: %v", typeGeoLite2CountryCSVIn, g.Action, record)
 		}
 
-		ccID := ""
-		switch {
-		case strings.TrimSpace(record[1]) != "":
-			ccID = strings.TrimSpace(record[1])
-		case strings.TrimSpace(record[2]) != "":
-			ccID = strings.TrimSpace(record[2])
-		case strings.TrimSpace(record[3]) != "":
-			ccID = strings.TrimSpace(record[3])
-		default:
+		// Use the first ID that maps to a country code in the order of
+		// geoname_id, registered_country_geoname_id, represented_country_geoname_id,
+		// as geoname_id may refer to a continent rather than a country.
+		countryCode := ""
+		for _, ccID := range record[1:4] {
+			if cc, found := ccMap[strings.TrimSpace(ccID)]; found {
+				countryCode = cc
+				break
+			}
+		}
+		if countryCode == "" {
 			continue
 		}
 
-		if countryCode, found := ccMap[ccID]; found {
-			cidrStr := strings.ToLower(strings.TrimSpace(record[0]))
-			entry, found := entries[countryCode]
-			if !found {
-				entry = lib.NewEntry(countryCode)
-			}
-			if err := entry.AddPrefix(cidrStr); err != nil {
-				return err
-			}
-			entries[countryCode] = entry
+		if len(g.Want) > 0 && !g.Want[countryCode] {
+			continue
 		}
+
+		cidrStr := strings.ToLower(strings.TrimSpace(record[0]))
+		entry, got := entries[countryCode]
+		if !got {
+			entry = lib.NewEntry(countryCode)
+		}
+
+		if err := entry.AddPrefix(cidrStr); err != nil {
+			return err
+		}
+
+		entries[countryCode] = entry
 	}
 
 	return nil
