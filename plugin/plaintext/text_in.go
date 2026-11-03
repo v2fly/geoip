@@ -125,7 +125,7 @@ func (t *textIn) Input(container lib.Container) (lib.Container, error) {
 			err = t.walkLocalFile(t.URI, t.Name, entries)
 		}
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", t.Type, t.Action, err)
 		}
 
 		fallthrough
@@ -138,16 +138,10 @@ func (t *textIn) Input(container lib.Container) (lib.Container, error) {
 	}
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("❌ [type %s | action %s] %w", t.Type, t.Action, err)
 	}
 
-	var ignoreIPType lib.IgnoreIPOption
-	switch t.OnlyIPType {
-	case lib.IPv4:
-		ignoreIPType = lib.IgnoreIPv6
-	case lib.IPv6:
-		ignoreIPType = lib.IgnoreIPv4
-	}
+	ignoreIPType := lib.GetIgnoreIPType(t.OnlyIPType)
 
 	if len(entries) == 0 {
 		return nil, fmt.Errorf("❌ [type %s | action %s] no entry is generated", t.Type, t.Action)
@@ -157,14 +151,14 @@ func (t *textIn) Input(container lib.Container) (lib.Container, error) {
 		switch t.Action {
 		case lib.ActionAdd:
 			if err := container.Add(entry, ignoreIPType); err != nil {
-				return nil, err
+				return nil, fmt.Errorf("❌ [type %s | action %s] %w", t.Type, t.Action, err)
 			}
 		case lib.ActionRemove:
 			if err := container.Remove(entry, lib.CaseRemovePrefix, ignoreIPType); err != nil {
-				return nil, err
+				return nil, fmt.Errorf("❌ [type %s | action %s] %w", t.Type, t.Action, err)
 			}
 		default:
-			return nil, lib.ErrUnknownAction
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", t.Type, t.Action, lib.ErrUnknownAction)
 		}
 	}
 
@@ -298,6 +292,10 @@ func (t *textIn) scanFile(reader io.Reader, entry *lib.Entry) error {
 }
 
 func (t *textIn) appendIPOrCIDR(ipOrCIDR []string, name string, entries map[string]*lib.Entry) error {
+	if len(ipOrCIDR) == 0 {
+		return nil
+	}
+
 	name = strings.ToUpper(name)
 
 	entry, found := entries[name]

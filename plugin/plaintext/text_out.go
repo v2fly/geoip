@@ -3,6 +3,7 @@ package plaintext
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -107,12 +108,12 @@ func (t *textOut) Output(container lib.Container) error {
 
 		cidrList, err := t.marshalText(entry)
 		if err != nil {
-			return err
+			return fmt.Errorf("❌ [type %s | action %s] %w", t.Type, t.Action, err)
 		}
 
 		filename := strings.ToLower(entry.GetName()) + t.OutputExt
 		if err := t.writeFile(filename, cidrList); err != nil {
-			return err
+			return fmt.Errorf("❌ [type %s | action %s] %w", t.Type, t.Action, err)
 		}
 	}
 
@@ -127,20 +128,28 @@ func (t *textOut) filterAndSortList(container lib.Container) []string {
 		}
 	}
 
+	hasWantedList := false
 	wantList := make([]string, 0, len(t.Want))
 	for _, want := range t.Want {
-		if want = strings.ToUpper(strings.TrimSpace(want)); want != "" && !excludeMap[want] {
-			wantList = append(wantList, want)
+		if want = strings.ToUpper(strings.TrimSpace(want)); want != "" {
+			hasWantedList = true
+			if !excludeMap[want] {
+				wantList = append(wantList, want)
+			}
 		}
 	}
 
-	if len(wantList) > 0 {
+	if hasWantedList {
+		if len(wantList) == 0 {
+			return []string{}
+		}
+
 		// Sort the list
 		slices.Sort(wantList)
 		return wantList
 	}
 
-	list := make([]string, 0, 300)
+	list := make([]string, 0, container.Len())
 	for entry := range container.Loop() {
 		name := entry.GetName()
 		if excludeMap[name] {

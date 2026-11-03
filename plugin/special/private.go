@@ -2,6 +2,7 @@ package special
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/v2fly/geoip/lib"
 )
@@ -84,36 +85,27 @@ func (p *private) GetDescription() string {
 }
 
 func (p *private) Input(container lib.Container) (lib.Container, error) {
-	entry, found := container.GetEntry(entryNamePrivate)
-	if !found {
-		entry = lib.NewEntry(entryNamePrivate)
-	}
+	entry := lib.NewEntry(entryNamePrivate)
 
 	for _, cidr := range privateCIDRs {
 		if err := entry.AddPrefix(cidr); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", p.Type, p.Action, err)
 		}
 	}
 
-	var ignoreIPType lib.IgnoreIPOption
-	switch p.OnlyIPType {
-	case lib.IPv4:
-		ignoreIPType = lib.IgnoreIPv6
-	case lib.IPv6:
-		ignoreIPType = lib.IgnoreIPv4
-	}
+	ignoreIPType := lib.GetIgnoreIPType(p.OnlyIPType)
 
 	switch p.Action {
 	case lib.ActionAdd:
 		if err := container.Add(entry, ignoreIPType); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", p.Type, p.Action, err)
 		}
 	case lib.ActionRemove:
 		if err := container.Remove(entry, lib.CaseRemovePrefix, ignoreIPType); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", p.Type, p.Action, err)
 		}
 	default:
-		return nil, lib.ErrUnknownAction
+		return nil, fmt.Errorf("❌ [type %s | action %s] %w", p.Type, p.Action, lib.ErrUnknownAction)
 	}
 
 	return container, nil

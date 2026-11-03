@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net"
 	"net/http"
+	"net/netip"
 	"os"
 	"strings"
 
@@ -95,33 +95,27 @@ func (g *geoipDatIn) Input(container lib.Container) (lib.Container, error) {
 	}
 
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, err)
 	}
 
 	if len(entries) == 0 {
-		return nil, fmt.Errorf("❌ [type %s | action %s] no entry is generated", typeGeoIPdatIn, g.Action)
+		return nil, fmt.Errorf("❌ [type %s | action %s] no entry is generated", g.Type, g.Action)
 	}
 
-	var ignoreIPType lib.IgnoreIPOption
-	switch g.OnlyIPType {
-	case lib.IPv4:
-		ignoreIPType = lib.IgnoreIPv6
-	case lib.IPv6:
-		ignoreIPType = lib.IgnoreIPv4
-	}
+	ignoreIPType := lib.GetIgnoreIPType(g.OnlyIPType)
 
 	for _, entry := range entries {
 		switch g.Action {
 		case lib.ActionAdd:
 			if err := container.Add(entry, ignoreIPType); err != nil {
-				return nil, err
+				return nil, fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, err)
 			}
 		case lib.ActionRemove:
 			if err := container.Remove(entry, lib.CaseRemovePrefix, ignoreIPType); err != nil {
-				return nil, err
+				return nil, fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, err)
 			}
 		default:
-			return nil, lib.ErrUnknownAction
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, lib.ErrUnknownAction)
 		}
 	}
 
@@ -184,8 +178,16 @@ func (g *geoipDatIn) generateEntries(reader io.Reader, entries map[string]*lib.E
 		}
 
 		for _, v2rayCIDR := range geoip.Cidr {
-			ipStr := net.IP(v2rayCIDR.GetIp()).String() + "/" + fmt.Sprint(v2rayCIDR.GetPrefix())
-			if err := entry.AddPrefix(ipStr); err != nil {
+			ip := v2rayCIDR.GetIp()
+			bits := v2rayCIDR.GetPrefix()
+			addr, ok := netip.AddrFromSlice(ip)
+			if !ok {
+				return fmt.Errorf("invalid IP in list %s: %s", name, ip)
+			}
+			if addr.Is4In6() && bits <= 32 {
+				addr = addr.Unmap()
+			}
+			if err := entry.AddPrefix(netip.PrefixFrom(addr, int(bits))); err != nil {
 				return err
 			}
 		}

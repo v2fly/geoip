@@ -96,39 +96,33 @@ func (g *geoLite2CountryMMDBIn) Input(container lib.Container) (lib.Container, e
 		content, err = os.ReadFile(g.URI)
 	}
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, err)
 	}
 
-	entries := make(map[string]*lib.Entry, 300)
+	entries := make(map[string]*lib.Entry)
 	err = g.generateEntries(content, entries)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, err)
 	}
 
 	if len(entries) == 0 {
-		return nil, fmt.Errorf("❌ [type %s | action %s] no entry is generated", typeGeoLite2CountryMMDBIn, g.Action)
+		return nil, fmt.Errorf("❌ [type %s | action %s] no entry is generated", g.Type, g.Action)
 	}
 
-	var ignoreIPType lib.IgnoreIPOption
-	switch g.OnlyIPType {
-	case lib.IPv4:
-		ignoreIPType = lib.IgnoreIPv6
-	case lib.IPv6:
-		ignoreIPType = lib.IgnoreIPv4
-	}
+	ignoreIPType := lib.GetIgnoreIPType(g.OnlyIPType)
 
 	for _, entry := range entries {
 		switch g.Action {
 		case lib.ActionAdd:
 			if err := container.Add(entry, ignoreIPType); err != nil {
-				return nil, err
+				return nil, fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, err)
 			}
 		case lib.ActionRemove:
 			if err := container.Remove(entry, lib.CaseRemovePrefix, ignoreIPType); err != nil {
-				return nil, err
+				return nil, fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, err)
 			}
 		default:
-			return nil, lib.ErrUnknownAction
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, lib.ErrUnknownAction)
 		}
 	}
 
@@ -142,14 +136,21 @@ func (g *geoLite2CountryMMDBIn) generateEntries(content []byte, entries map[stri
 	}
 	defer db.Close()
 
+	err = db.Verify()
+	if err != nil {
+		return err
+	}
+
 	for network := range db.Networks() {
+		var name string
+		var err error
+
 		var record geoip2.Country
-		err := network.Decode(&record)
+		err = network.Decode(&record)
 		if err != nil {
 			return err
 		}
 
-		name := ""
 		switch {
 		case strings.TrimSpace(record.Country.ISOCode) != "":
 			name = strings.ToUpper(strings.TrimSpace(record.Country.ISOCode))
@@ -157,8 +158,6 @@ func (g *geoLite2CountryMMDBIn) generateEntries(content []byte, entries map[stri
 			name = strings.ToUpper(strings.TrimSpace(record.RegisteredCountry.ISOCode))
 		case strings.TrimSpace(record.RepresentedCountry.ISOCode) != "":
 			name = strings.ToUpper(strings.TrimSpace(record.RepresentedCountry.ISOCode))
-		default:
-			continue
 		}
 
 		if name == "" || !network.Found() {
