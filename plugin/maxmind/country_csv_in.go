@@ -214,7 +214,14 @@ func (g *geoLite2CountryCSVIn) process(file string, ccMap map[string]string, ent
 	defer f.Close()
 
 	reader := csv.NewReader(f)
-	reader.Read() // skip header
+
+	// Skip header
+	if _, err := reader.Read(); err != nil {
+		if err == io.EOF {
+			return nil
+		}
+		return err
+	}
 
 	for {
 		record, err := reader.Read()
