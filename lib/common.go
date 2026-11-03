@@ -27,8 +27,20 @@ func GetRemoteURLReader(url string) (io.ReadCloser, error) {
 	}
 
 	if resp.StatusCode != http.StatusOK {
+		resp.Body.Close()
 		return nil, fmt.Errorf("failed to get remote content -> %s: %s", url, resp.Status)
 	}
 
 	return resp.Body, nil
+}
+
+func GetIgnoreIPType(onlyIPType IPType) IgnoreIPOption {
+	switch onlyIPType {
+	case IPv4:
+		return IgnoreIPv6
+	case IPv6:
+		return IgnoreIPv4
+	}
+
+	return nil
 }

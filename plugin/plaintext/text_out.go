@@ -3,6 +3,7 @@ package plaintext
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -44,14 +45,16 @@ func newTextOut(action lib.Action, data json.RawMessage) (lib.OutputConverter, e
 
 	if len(data) > 0 {
 		if err := json.Unmarshal(data, &tmp); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", typeTextOut, action, err)
 		}
 	}
 
+	tmp.OutputDir = strings.TrimSpace(tmp.OutputDir)
 	if tmp.OutputDir == "" {
 		tmp.OutputDir = defaultOutputDir
 	}
 
+	tmp.OutputExt = strings.TrimSpace(tmp.OutputExt)
 	if tmp.OutputExt == "" {
 		tmp.OutputExt = ".txt"
 	}
@@ -107,12 +110,12 @@ func (t *textOut) Output(container lib.Container) error {
 
 		cidrList, err := t.marshalText(entry)
 		if err != nil {
-			return err
+			return fmt.Errorf("❌ [type %s | action %s] %w", t.Type, t.Action, err)
 		}
 
 		filename := strings.ToLower(entry.GetName()) + t.OutputExt
 		if err := t.writeFile(filename, cidrList); err != nil {
-			return err
+			return fmt.Errorf("❌ [type %s | action %s] %w", t.Type, t.Action, err)
 		}
 	}
 
@@ -127,20 +130,28 @@ func (t *textOut) filterAndSortList(container lib.Container) []string {
 		}
 	}
 
+	hasWantedList := false
 	wantList := make([]string, 0, len(t.Want))
 	for _, want := range t.Want {
-		if want = strings.ToUpper(strings.TrimSpace(want)); want != "" && !excludeMap[want] {
-			wantList = append(wantList, want)
+		if want = strings.ToUpper(strings.TrimSpace(want)); want != "" {
+			hasWantedList = true
+			if !excludeMap[want] {
+				wantList = append(wantList, want)
+			}
 		}
 	}
 
-	if len(wantList) > 0 {
-		// Sort the list
+	if hasWantedList {
+		if len(wantList) == 0 {
+			return []string{}
+		}
+
+		// Sort the list and remove duplicates
 		slices.Sort(wantList)
-		return wantList
+		return slices.Compact(wantList)
 	}
 
-	list := make([]string, 0, 300)
+	list := make([]string, 0, container.Len())
 	for entry := range container.Loop() {
 		name := entry.GetName()
 		if excludeMap[name] {
@@ -156,27 +167,7 @@ func (t *textOut) filterAndSortList(container lib.Container) []string {
 }
 
 func (t *textOut) marshalText(entry *lib.Entry) ([]string, error) {
-	var entryCidr []string
-	var err error
-	switch t.OnlyIPType {
-	case lib.IPv4:
-		entryCidr, err = entry.MarshalText(lib.IgnoreIPv6)
-		if err != nil {
-			return nil, err
-		}
-	case lib.IPv6:
-		entryCidr, err = entry.MarshalText(lib.IgnoreIPv4)
-		if err != nil {
-			return nil, err
-		}
-	default:
-		entryCidr, err = entry.MarshalText()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return entryCidr, nil
+	return entry.MarshalText(lib.GetIgnoreIPType(t.OnlyIPType))
 }
 
 func (t *textOut) writeFile(filename string, cidrList []string) error {
