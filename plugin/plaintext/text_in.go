@@ -43,9 +43,13 @@ func newTextIn(action lib.Action, data json.RawMessage) (lib.InputConverter, err
 
 	if len(data) > 0 {
 		if err := json.Unmarshal(data, &tmp); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", typeTextIn, action, err)
 		}
 	}
+
+	tmp.Name = strings.TrimSpace(tmp.Name)
+	tmp.URI = strings.TrimSpace(tmp.URI)
+	tmp.InputDir = strings.TrimSpace(tmp.InputDir)
 
 	if tmp.InputDir == "" {
 		if tmp.Name == "" {

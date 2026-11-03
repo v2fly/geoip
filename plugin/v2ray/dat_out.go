@@ -45,14 +45,16 @@ func newGeoIPDatOut(action lib.Action, data json.RawMessage) (lib.OutputConverte
 
 	if len(data) > 0 {
 		if err := json.Unmarshal(data, &tmp); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", typeGeoIPdatOut, action, err)
 		}
 	}
 
+	tmp.OutputName = strings.TrimSpace(tmp.OutputName)
 	if tmp.OutputName == "" {
 		tmp.OutputName = defaultOutputName
 	}
 
+	tmp.OutputDir = strings.TrimSpace(tmp.OutputDir)
 	if tmp.OutputDir == "" {
 		tmp.OutputDir = defaultOutputDir
 	}

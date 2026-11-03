@@ -45,14 +45,16 @@ func newTextOut(action lib.Action, data json.RawMessage) (lib.OutputConverter, e
 
 	if len(data) > 0 {
 		if err := json.Unmarshal(data, &tmp); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", typeTextOut, action, err)
 		}
 	}
 
+	tmp.OutputDir = strings.TrimSpace(tmp.OutputDir)
 	if tmp.OutputDir == "" {
 		tmp.OutputDir = defaultOutputDir
 	}
 
+	tmp.OutputExt = strings.TrimSpace(tmp.OutputExt)
 	if tmp.OutputExt == "" {
 		tmp.OutputExt = ".txt"
 	}
@@ -165,27 +167,7 @@ func (t *textOut) filterAndSortList(container lib.Container) []string {
 }
 
 func (t *textOut) marshalText(entry *lib.Entry) ([]string, error) {
-	var entryCidr []string
-	var err error
-	switch t.OnlyIPType {
-	case lib.IPv4:
-		entryCidr, err = entry.MarshalText(lib.IgnoreIPv6)
-		if err != nil {
-			return nil, err
-		}
-	case lib.IPv6:
-		entryCidr, err = entry.MarshalText(lib.IgnoreIPv4)
-		if err != nil {
-			return nil, err
-		}
-	default:
-		entryCidr, err = entry.MarshalText()
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return entryCidr, nil
+	return entry.MarshalText(lib.GetIgnoreIPType(t.OnlyIPType))
 }
 
 func (t *textOut) writeFile(filename string, cidrList []string) error {

@@ -43,9 +43,13 @@ func newGeoLite2CountryCSVIn(action lib.Action, data json.RawMessage) (lib.Input
 
 	if len(data) > 0 {
 		if err := json.Unmarshal(data, &tmp); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", typeGeoLite2CountryCSVIn, action, err)
 		}
 	}
+
+	tmp.CountryCodeFile = strings.TrimSpace(tmp.CountryCodeFile)
+	tmp.IPv4File = strings.TrimSpace(tmp.IPv4File)
+	tmp.IPv6File = strings.TrimSpace(tmp.IPv6File)
 
 	if tmp.CountryCodeFile == "" {
 		tmp.CountryCodeFile = defaultGeoLite2CountryCodeFile

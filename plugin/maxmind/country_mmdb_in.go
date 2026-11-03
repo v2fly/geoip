@@ -39,10 +39,11 @@ func newGeoLite2CountryMMDBIn(action lib.Action, data json.RawMessage) (lib.Inpu
 
 	if len(data) > 0 {
 		if err := json.Unmarshal(data, &tmp); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", typeGeoLite2CountryMMDBIn, action, err)
 		}
 	}
 
+	tmp.URI = strings.TrimSpace(tmp.URI)
 	if tmp.URI == "" {
 		tmp.URI = defaultGeoLite2CountryMMDBFile
 	}
