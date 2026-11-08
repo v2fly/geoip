@@ -30,12 +30,12 @@ func newCutter(action lib.Action, data json.RawMessage) (lib.InputConverter, err
 
 	if len(data) > 0 {
 		if err := json.Unmarshal(data, &tmp); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", typeCutter, action, err)
 		}
 	}
 
 	if action != lib.ActionRemove {
-		return nil, fmt.Errorf("type %s only supports `remove` action", typeCutter)
+		return nil, fmt.Errorf("❌ [type %s | action %s] only supports `remove` action", typeCutter, action)
 	}
 
 	// Filter want list
@@ -47,7 +47,7 @@ func newCutter(action lib.Action, data json.RawMessage) (lib.InputConverter, err
 	}
 
 	if len(wantList) == 0 {
-		return nil, fmt.Errorf("type %s wantedList must be specified", typeCutter)
+		return nil, fmt.Errorf("❌ [type %s | action %s] wantedList must be specified", typeCutter, action)
 	}
 
 	return &cutter{
@@ -80,20 +80,15 @@ func (c *cutter) GetDescription() string {
 }
 
 func (c *cutter) Input(container lib.Container) (lib.Container, error) {
-	var ignoreIPType lib.IgnoreIPOption
-	switch c.OnlyIPType {
-	case lib.IPv4:
-		ignoreIPType = lib.IgnoreIPv6
-	case lib.IPv6:
-		ignoreIPType = lib.IgnoreIPv4
-	}
+	ignoreIPType := lib.GetIgnoreIPType(c.OnlyIPType)
 
 	for entry := range container.Loop() {
 		if len(c.Want) > 0 && !c.Want[entry.GetName()] {
 			continue
 		}
+
 		if err := container.Remove(entry, lib.CaseRemoveEntry, ignoreIPType); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", c.Type, c.Action, err)
 		}
 	}
 

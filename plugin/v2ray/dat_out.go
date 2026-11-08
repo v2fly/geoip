@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/netip"
 	"os"
 	"path/filepath"
 	"slices"
@@ -46,14 +45,16 @@ func newGeoIPDatOut(action lib.Action, data json.RawMessage) (lib.OutputConverte
 
 	if len(data) > 0 {
 		if err := json.Unmarshal(data, &tmp); err != nil {
-			return nil, err
+			return nil, fmt.Errorf("❌ [type %s | action %s] %w", typeGeoIPdatOut, action, err)
 		}
 	}
 
+	tmp.OutputName = strings.TrimSpace(tmp.OutputName)
 	if tmp.OutputName == "" {
 		tmp.OutputName = defaultOutputName
 	}
 
+	tmp.OutputDir = strings.TrimSpace(tmp.OutputDir)
 	if tmp.OutputDir == "" {
 		tmp.OutputDir = defaultOutputDir
 	}
@@ -97,7 +98,7 @@ func (g *geoipDatOut) GetDescription() string {
 
 func (g *geoipDatOut) Output(container lib.Container) error {
 	geoIPList := new(GeoIPList)
-	geoIPList.Entry = make([]*GeoIP, 0, 300)
+	geoIPList.Entry = make([]*GeoIP, 0, container.Len())
 	updated := false
 
 	for _, name := range g.filterAndSortList(container) {
@@ -109,7 +110,7 @@ func (g *geoipDatOut) Output(container lib.Container) error {
 
 		geoIP, err := g.generateGeoIP(entry)
 		if err != nil {
-			return err
+			return fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, err)
 		}
 		geoIPList.Entry = append(geoIPList.Entry, geoIP)
 		updated = true
@@ -117,12 +118,12 @@ func (g *geoipDatOut) Output(container lib.Container) error {
 		if g.OneFilePerList {
 			geoIPBytes, err := proto.Marshal(geoIPList)
 			if err != nil {
-				return err
+				return fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, err)
 			}
 
 			filename := strings.ToLower(entry.GetName()) + ".dat"
 			if err := g.writeFile(filename, geoIPBytes); err != nil {
-				return err
+				return fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, err)
 			}
 
 			geoIPList.Entry = nil
@@ -135,10 +136,10 @@ func (g *geoipDatOut) Output(container lib.Container) error {
 
 		geoIPBytes, err := proto.Marshal(geoIPList)
 		if err != nil {
-			return err
+			return fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, err)
 		}
 		if err := g.writeFile(g.OutputName, geoIPBytes); err != nil {
-			return err
+			return fmt.Errorf("❌ [type %s | action %s] %w", g.Type, g.Action, err)
 		}
 	}
 
@@ -153,20 +154,28 @@ func (g *geoipDatOut) filterAndSortList(container lib.Container) []string {
 		}
 	}
 
+	hasWantedList := false
 	wantList := make([]string, 0, len(g.Want))
 	for _, want := range g.Want {
-		if want = strings.ToUpper(strings.TrimSpace(want)); want != "" && !excludeMap[want] {
-			wantList = append(wantList, want)
+		if want = strings.ToUpper(strings.TrimSpace(want)); want != "" {
+			hasWantedList = true
+			if !excludeMap[want] {
+				wantList = append(wantList, want)
+			}
 		}
 	}
 
-	if len(wantList) > 0 {
+	if hasWantedList {
+		if len(wantList) == 0 {
+			return []string{}
+		}
+
 		// Sort the list
 		slices.Sort(wantList)
 		return wantList
 	}
 
-	list := make([]string, 0, 300)
+	list := make([]string, 0, container.Len())
 	for entry := range container.Loop() {
 		name := entry.GetName()
 		if excludeMap[name] {
@@ -182,16 +191,7 @@ func (g *geoipDatOut) filterAndSortList(container lib.Container) []string {
 }
 
 func (g *geoipDatOut) generateGeoIP(entry *lib.Entry) (*GeoIP, error) {
-	var entryCidr []netip.Prefix
-	var err error
-	switch g.OnlyIPType {
-	case lib.IPv4:
-		entryCidr, err = entry.MarshalPrefix(lib.IgnoreIPv6)
-	case lib.IPv6:
-		entryCidr, err = entry.MarshalPrefix(lib.IgnoreIPv4)
-	default:
-		entryCidr, err = entry.MarshalPrefix()
-	}
+	entryCidr, err := entry.MarshalPrefix(lib.GetIgnoreIPType(g.OnlyIPType))
 	if err != nil {
 		return nil, err
 	}
@@ -211,7 +211,7 @@ func (g *geoipDatOut) generateGeoIP(entry *lib.Entry) (*GeoIP, error) {
 		}, nil
 	}
 
-	return nil, fmt.Errorf("❌ [type %s | action %s] entry %s has no CIDR", g.Type, g.Action, entry.GetName())
+	return nil, fmt.Errorf("entry %s has no CIDR", entry.GetName())
 }
 
 // Sort by country code to make reproducible builds
