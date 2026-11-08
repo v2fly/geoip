@@ -13,11 +13,6 @@ const (
 	descPrivate      = "Convert LAN and private network CIDR to other formats"
 )
 
-// References:
-// - https://github.com/v2fly/geoip/issues/234
-// - https://github.com/v2fly/geoip/pull/412
-// - https://www.iana.org/assignments/iana-ipv4-special-registry
-// - https://www.iana.org/assignments/iana-ipv6-special-registry
 var privateCIDRs = []string{
 	"0.0.0.0/8",
 	"10.0.0.0/8",
@@ -27,8 +22,6 @@ var privateCIDRs = []string{
 	"172.16.0.0/12",
 	"192.0.0.0/24",
 	"192.0.2.0/24",
-	"192.31.196.0/24",
-	"192.52.193.0/24",
 	"192.88.99.0/24",
 	"192.168.0.0/16",
 	"198.18.0.0/15",
@@ -37,15 +30,8 @@ var privateCIDRs = []string{
 	"224.0.0.0/4",
 	"240.0.0.0/4",
 	"255.255.255.255/32",
-	"::/127",
-	"64:ff9b::/96",
-	"64:ff9b:1::/48",
-	"100::/64",
-	"2001::/23",
-	"2001:db8::/32",
-	"2620:4f:8000::/48",
-	"3fff::/20",
-	"5f00::/16",
+	"::/128",
+	"::1/128",
 	"fc00::/7",
 	"fe80::/10",
 	"ff00::/8",

@@ -170,9 +170,9 @@ func (g *geoipDatOut) filterAndSortList(container lib.Container) []string {
 			return []string{}
 		}
 
-		// Sort the list and remove duplicates
+		// Sort the list
 		slices.Sort(wantList)
-		return slices.Compact(wantList)
+		return wantList
 	}
 
 	list := make([]string, 0, container.Len())

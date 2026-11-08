@@ -108,7 +108,7 @@ func (t *textOut) Output(container lib.Container) error {
 			continue
 		}
 
-		cidrList, err := t.marshalText(entry)
+		cidrList, err := entry.MarshalText(lib.GetIgnoreIPType(t.OnlyIPType))
 		if err != nil {
 			return fmt.Errorf("❌ [type %s | action %s] %w", t.Type, t.Action, err)
 		}
@@ -146,9 +146,9 @@ func (t *textOut) filterAndSortList(container lib.Container) []string {
 			return []string{}
 		}
 
-		// Sort the list and remove duplicates
+		// Sort the list
 		slices.Sort(wantList)
-		return slices.Compact(wantList)
+		return wantList
 	}
 
 	list := make([]string, 0, container.Len())
@@ -164,10 +164,6 @@ func (t *textOut) filterAndSortList(container lib.Container) []string {
 	slices.Sort(list)
 
 	return list
-}
-
-func (t *textOut) marshalText(entry *lib.Entry) ([]string, error) {
-	return entry.MarshalText(lib.GetIgnoreIPType(t.OnlyIPType))
 }
 
 func (t *textOut) writeFile(filename string, cidrList []string) error {
